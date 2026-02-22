@@ -16,7 +16,7 @@
  .align 2
 @ CG2028 Assignment, Sem 2, AY 2025/26
 @ (c) ECE NUS, 2025
-@ Write Student 1’s Name here: ABCD (A1234567R)
+@ Write Student 1’s Name here: Lam Zhen Lei, Ethan (A0308118J)
 @ Write Student 2’s Name here: WXYZ (A0000007X)
 @ You could create a look-up table of registers here:
 @ R0 ...

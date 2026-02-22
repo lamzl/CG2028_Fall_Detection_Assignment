@@ -7,11 +7,13 @@
 
 /*--------------------------- Includes ---------------------------------------*/
 #include "main.h"
+#include <stdbool.h>
+#include <math.h> // for the sqrt function
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.h"
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.h"
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.h"
 
-#include "stdio.h"
+#include <stdio.h>
 #include "string.h"
 #include <sys/stat.h>
 
@@ -140,7 +142,43 @@ int main(void)
 		// ********* Fall detection *********/
 		// write your program from here:
 
+		// calculate the magnitude of the acceleration (sqrt(ax^2 + ay^2 + az^2))
+		float accelerationMagnitude = sqrt((accel_filt_asm[0] * accel_filt_asm[0]) + (accel_filt_asm[1] * accel_filt_asm[1])
+				+ accel_filt_asm[2] * accel_filt_asm[2]);
 
+		// calculate the magnitude of the gyro readings
+		float gyroMagnitude = sqrt((gyro_velocity[0] * gyro_velocity[0]) + (gyro_velocity[1] * gyro_velocity[1])
+				+ gyro_velocity[2] * gro_velocity[2]);
+
+		// Defining the state of drop the board is
+		float free_fall_threshold = 5.0f;
+		float impact_threshold = 20.0f;
+		float gyro_threshold = 150.0f; // high rate of rotation in degree per second may indicate tumbling on the ground
+
+		// there are 3 states of fall (1) free fall, (2) impact, (3) tumble
+		static int fall_state = 0;
+		static bool hasDropped = false;
+		if (fall_state == 0){
+			if (accelerationMagnitude < free_fall_threshold){
+				fall_state = 1; // wait for impact
+			}
+		} else if (fall_state == 1){
+			if (accelerationMagnitude > impact_threshold){
+				fall_state = 2; // confirmed impact
+			}
+		} else if (fall_state == 2){
+			if (gyroMagnitude > gyro_threshold){
+				hasDropped = true;
+				fall_state = 0; // reset the state machine back to the original state
+			}
+		}
+
+		// Changing the behaviour of the LED depending on whether fall has been detected
+		if (hasDropped){
+			delay_ms = 100; // fast blinking to indicate fall
+		} else if (hasDropped == false){
+			delay_ms = 1000; // slow blinking to indicate normal activity
+		}
 	}
 
 
