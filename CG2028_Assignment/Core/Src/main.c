@@ -148,7 +148,7 @@ int main(void)
 
 		// calculate the magnitude of the gyro readings
 		float gyroMagnitude = sqrt((gyro_velocity[0] * gyro_velocity[0]) + (gyro_velocity[1] * gyro_velocity[1])
-				+ gyro_velocity[2] * gro_velocity[2]);
+				+ gyro_velocity[2] * gyro_velocity[2]);
 
 		// Defining the state of drop the board is
 		float free_fall_threshold = 5.0f;
@@ -233,6 +233,7 @@ static void UART1_Init(void)
 
 
 // Do not modify these lines of code. They are written to supress UART related warnings
+int _write(int file, char *ptr, int len) { return len; }
 int _read(int file, char *ptr, int len) { return 0; }
 int _fstat(int file, struct stat *st) { return 0; }
 int _lseek(int file, int ptr, int dir) { return 0; }
