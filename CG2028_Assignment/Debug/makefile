@@ -68,8 +68,8 @@ all: main-build
 main-build: CG2028_Assignment.elf secondary-outputs
 
 # Tool invocations
-CG2028_Assignment.elf CG2028_Assignment.map: $(OBJS) $(USER_OBJS) /Users/ethanlam/Downloads/CG2028\ assignment\ /CG2028_Assignment/STM32L4S5VITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "CG2028_Assignment.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/ethanlam/Downloads/CG2028 assignment /CG2028_Assignment/STM32L4S5VITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CG2028_Assignment.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+CG2028_Assignment.elf CG2028_Assignment.map: $(OBJS) $(USER_OBJS) /Users/ethanlam/Documents/CG2028_Fall_Detection_Assignment/CG2028_Assignment/STM32L4S5VITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "CG2028_Assignment.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/ethanlam/Documents/CG2028_Fall_Detection_Assignment/CG2028_Assignment/STM32L4S5VITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CG2028_Assignment.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

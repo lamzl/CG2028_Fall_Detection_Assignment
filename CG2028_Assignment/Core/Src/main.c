@@ -19,9 +19,9 @@
 #include <sys/stat.h>
 
 static void UART1_Init(void);
-
+static void User_Button_Init();
 extern void initialise_monitor_handles(void);	// for semi-hosting support (printf). Will not be required if transmitting via UART
-
+// void Update_Distress_Characteristic(uint8_t status);
 extern int mov_avg(int N, int* accel_buff); // asm implementation
 
 int mov_avg_C(int N, int* accel_buff); // Reference C implementation
@@ -38,6 +38,9 @@ int main(void)
 
 	/* UART initialization  */
 	UART1_Init();
+
+	/* Initialise the button for PC13*/
+	User_Button_Init();
 
 	/* Peripheral initializations using BSP functions */
 	BSP_LED_Init(LED2);
@@ -80,7 +83,7 @@ int main(void)
 
 	const uint32_t freefall_timeout_ms = 600;      // must see impact within this window
 	const uint32_t stillness_window_ms = 800;      // time after impact to look for stillness
-	const uint32_t fall_alert_duration_ms = 3000;  // fast blink duration then reset to normal
+	const uint32_t fall_alert_duration_ms = 10000;  // fast blink duration then reset to normal, this will be set to 10 seconds
 
 	while (1)
 	{
@@ -221,9 +224,23 @@ int main(void)
 		{
 			delay_ms = 100; // fast blinking to indicate fall
 
-			// Auto reset after alert duration so it doesn't blink forever
-			if ((now - fall_alert_start_tick) > fall_alert_duration_ms)
-			{
+//			// Auto reset after alert duration so it doesn't blink forever
+//			if ((now - fall_alert_start_tick) > fall_alert_duration_ms)
+//			{
+//				fall_state = 0;
+//			}
+
+			if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == GPIO_PIN_SET){
+				fall_state = 0; // that means that the user has indicated that he is ok
+				delay_ms = 1000; // go back to blinking the LED slowly
+
+				char cancel_msg[] = "\r\n--- USER PRESSED 'I AM OK'. ALARM CANCELLED! HE IS ALRIGHT! ---\r\n\n";
+				HAL_UART_Transmit(&huart1, (uint8_t*)cancel_msg, strlen(cancel_msg), HAL_MAX_DELAY);
+				HAL_Delay(300);
+
+			} else if (now - fall_alert_start_tick > fall_alert_duration_ms){ // if the duration exceeds 10 seconds
+				char emergency_msg[] = "\r\n!!! NO RESPONSE. INITIATING EMERGENCY PROTOCOL !!!\r\n\n";
+				HAL_UART_Transmit(&huart1, (uint8_t*)emergency_msg, strlen(emergency_msg), HAL_MAX_DELAY);
 				fall_state = 0;
 			}
 		}
@@ -256,6 +273,18 @@ int mov_avg_C(int N, int* accel_buff)
 	result=result/N;
 
 	return result;
+}
+
+static void User_Button_Init() {
+	// Enable the clock for GPIO Port C
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+
+	// Configure PC13 as an input pin
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+	GPIO_InitStruct.Pin = GPIO_PIN_13;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 }
 
 static void UART1_Init(void)
