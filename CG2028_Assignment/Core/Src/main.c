@@ -12,15 +12,16 @@
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.h"
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.h"
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.h"
+#include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.h"
 
 #include <stdio.h>
 #include "string.h"
 #include <sys/stat.h>
 
 static void UART1_Init(void);
-
+static void User_Button_Init();
 extern void initialise_monitor_handles(void);	// for semi-hosting support (printf). Will not be required if transmitting via UART
-
+// void Update_Distress_Characteristic(uint8_t status);
 extern int mov_avg(int N, int* accel_buff); // asm implementation
 
 int mov_avg_C(int N, int* accel_buff); // Reference C implementation
@@ -38,10 +39,14 @@ int main(void)
 	/* UART initialization  */
 	UART1_Init();
 
+	/* Initialise the button for PC13*/
+	User_Button_Init();
+
 	/* Peripheral initializations using BSP functions */
 	BSP_LED_Init(LED2);
 	BSP_ACCELERO_Init();
 	BSP_GYRO_Init();
+	BSP_PSENSOR_Init();
 
 	/*Set the initial LED state to off*/
 	BSP_LED_Off(LED2);
@@ -50,12 +55,53 @@ int main(void)
 	int accel_buff_y[4]={0};
 	int accel_buff_z[4]={0};
 	int i=0;
+
+	// Timing: non-blocking sampling + non-blocking LED blink
+	uint32_t last_sample_tick = 0;
+	uint32_t last_led_tick = 0;
+	const uint32_t sample_period_ms = 50;
+
 	int delay_ms=1000; //change delay time to suit your code
+
+	// Barometer baseline / confirmation
+	float pressure_baseline = BSP_PSENSOR_ReadPressure();
+	float current_pressure = pressure_baseline;
+	bool pressure_confirmed = false;
+
+	// Fall detection state machine + timers
+	// States: 0 = NORMAL, 1 = FREEFALL, 2 = IMPACT_WAIT_STILL, 3 = FALL_ALERT
+	static int fall_state = 0;
+	static uint32_t freefall_start_tick = 0;
+	static uint32_t impact_tick = 0;
+	static uint32_t fall_alert_start_tick = 0;
+
+	// Thresholds (tune later with UART prints)
+	const float free_fall_threshold = 5.0f;   // m/s^2  (below this indicates near freefall)
+	const float impact_threshold    = 20.0f;  // m/s^2  (above this indicates impact spike)
+	const float still_gyro_threshold = 80.0f; // dps-ish (must be low to indicate lying still)
+	const float pressure_rise_threshold = 0.10f; // hPa increase indicates lower altitude
+
+	const uint32_t freefall_timeout_ms = 600;      // must see impact within this window
+	const uint32_t stillness_window_ms = 800;      // time after impact to look for stillness
+	const uint32_t fall_alert_duration_ms = 10000;  // fast blink duration then reset to normal, this will be set to 10 seconds
 
 	while (1)
 	{
+		uint32_t now = HAL_GetTick();
 
-		BSP_LED_Toggle(LED2);		// This function helps to toggle the current LED state
+		// Non-blocking LED blink: toggle based on delay_ms
+		if ((now - last_led_tick) >= (uint32_t)delay_ms)
+		{
+			BSP_LED_Toggle(LED2);		// This function helps to toggle the current LED state
+			last_led_tick = now;
+		}
+
+		// Run the sensor + detection logic every 50ms (non-blocking)
+		if ((now - last_sample_tick) < sample_period_ms)
+		{
+			continue;
+		}
+		last_sample_tick = now;
 
 		int16_t accel_data_i16[3] = { 0 };			// array to store the x, y and z readings of accelerometer
 		/********Function call to read accelerometer values*********/
@@ -78,6 +124,8 @@ int main(void)
 		gyro_velocity[1]=(gyro_data[1]*9.8/(1000));
 		gyro_velocity[2]=(gyro_data[2]*9.8/(1000));
 
+		// ********* Read barometer values *********/
+		current_pressure = BSP_PSENSOR_ReadPressure();
 
 		//Preprocessing the filtered outputs  The same needs to be done for the output from the C program as well
 		float accel_filt_asm[3]={0}; // final value of filtered acceleration values
@@ -94,51 +142,6 @@ int main(void)
 		accel_filt_c[1]=(float)mov_avg_C(N,accel_buff_y) * (9.8/1000.0f);
 		accel_filt_c[2]=(float)mov_avg_C(N,accel_buff_z) * (9.8/1000.0f);
 
-		/***************************UART transmission*******************************************/
-		char buffer[150]; // Create a buffer large enough to hold the text
-
-		/******Transmitting results of C execution over UART*********/
-		if(i>=3)
-		{
-			// 1. First printf() Equivalent
-			sprintf(buffer, "Results of C execution for filtered accelerometer readings:\r\n");
-			HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
-
-			// 2. Second printf() (with Floats) Equivalent
-			// Note: Requires -u _printf_float to be enabled in Linker settings
-			sprintf(buffer, "Averaged X : %f; Averaged Y : %f; Averaged Z : %f;\r\n",
-					accel_filt_c[0], accel_filt_c[1], accel_filt_c[2]);
-			HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
-
-			/******Transmitting results of asm execution over UART*********/
-
-			// 1. First printf() Equivalent
-			sprintf(buffer, "Results of assembly execution for filtered accelerometer readings:\r\n");
-			HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
-
-			// 2. Second printf() (with Floats) Equivalent
-			// Note: Requires -u _printf_float to be enabled in Linker settings
-			sprintf(buffer, "Averaged X : %f; Averaged Y : %f; Averaged Z : %f;\r\n",
-					accel_filt_asm[0], accel_filt_asm[1], accel_filt_asm[2]);
-			HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
-
-			/******Transmitting Gyroscope readings over UART*********/
-
-			// 1. First printf() Equivalent
-			sprintf(buffer, "Gyroscope sensor readings:\r\n");
-			HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
-
-			// 2. Second printf() (with Floats) Equivalent
-			// Note: Requires -u _printf_float to be enabled in Linker settings
-			sprintf(buffer, "Averaged X : %f; Averaged Y : %f; Averaged Z : %f;\r\n\n",
-					gyro_velocity[0], gyro_velocity[1], gyro_velocity[2]);
-			HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
-		}
-
-		HAL_Delay(delay_ms);	// 1 second delay
-
-		i++;
-
 		// ********* Fall detection *********/
 		// write your program from here:
 
@@ -150,38 +153,111 @@ int main(void)
 		float gyroMagnitude = sqrt((gyro_velocity[0] * gyro_velocity[0]) + (gyro_velocity[1] * gyro_velocity[1])
 				+ gyro_velocity[2] * gyro_velocity[2]);
 
-		// Defining the state of drop the board is
-		float free_fall_threshold = 5.0f;
-		float impact_threshold = 20.0f;
-		float gyro_threshold = 150.0f; // high rate of rotation in degree per second may indicate tumbling on the ground
+		// State machine:
+		// 0 NORMAL -> 1 FREEFALL when accel drops
+		// 1 FREEFALL -> 2 IMPACT_WAIT_STILL when impact spike occurs
+		// 2 IMPACT_WAIT_STILL -> 3 FALL_ALERT when (stillness OR barometer confirm) within window
+		// 3 FALL_ALERT -> 0 NORMAL after duration (auto reset)
 
-		// there are 3 states of fall (1) free fall, (2) impact, (3) tumble
-		static int fall_state = 0;
-		static bool hasDropped = false;
-		if (fall_state == 0){
-			if (accelerationMagnitude < free_fall_threshold){
-				fall_state = 1; // wait for impact
-			}
-		} else if (fall_state == 1){
-			if (accelerationMagnitude > impact_threshold){
-				fall_state = 2; // confirmed impact
-			}
-		} else if (fall_state == 2){
-			if (gyroMagnitude > gyro_threshold){
-				hasDropped = true;
-				fall_state = 0; // reset the state machine back to the original state
-			}
-		}
-
-		// Changing the behaviour of the LED depending on whether fall has been detected
-		if (hasDropped){
-			delay_ms = 100; // fast blinking to indicate fall
-		} else if (hasDropped == false){
+		if (fall_state == 0)
+		{
+			pressure_confirmed = false;
 			delay_ms = 1000; // slow blinking to indicate normal activity
+
+			if (accelerationMagnitude < free_fall_threshold)
+			{
+				fall_state = 1;
+				freefall_start_tick = now;
+				pressure_baseline = current_pressure; // capture baseline at free-fall start
+			}
 		}
+		else if (fall_state == 1)
+		{
+			// If no impact soon, reset
+			if ((now - freefall_start_tick) > freefall_timeout_ms)
+			{
+				fall_state = 0;
+			}
+			else
+			{
+				// Barometer can confirm drop (pressure increases when lower)
+				if ((current_pressure - pressure_baseline) > pressure_rise_threshold)
+				{
+					pressure_confirmed = true;
+				}
+
+				if (accelerationMagnitude > impact_threshold)
+				{
+					fall_state = 2;
+					impact_tick = now;
+				}
+			}
+		}
+		else if (fall_state == 2)
+		{
+			// We do NOT require high gyro here (because lifting causes high gyro).
+			// Instead, after impact, we look for "stillness" (gyro low) typical of lying on floor.
+			if ((now - impact_tick) <= stillness_window_ms)
+			{
+				if (gyroMagnitude < still_gyro_threshold)
+				{
+					// Confirm fall (impact + then still)
+					fall_state = 3;
+					fall_alert_start_tick = now;
+					delay_ms = 100; // fast blinking to indicate fall
+				}
+				else if (pressure_confirmed)
+				{
+					// Alternate confirm: impact + pressure rise sustained
+					fall_state = 3;
+					fall_alert_start_tick = now;
+					delay_ms = 100; // fast blinking to indicate fall
+				}
+			}
+			else
+			{
+				// If we didn't get confirmation soon after impact, reset
+				fall_state = 0;
+			}
+		}
+		else if (fall_state == 3)
+		{
+			delay_ms = 100; // fast blinking to indicate fall
+
+//			// Auto reset after alert duration so it doesn't blink forever
+//			if ((now - fall_alert_start_tick) > fall_alert_duration_ms)
+//			{
+//				fall_state = 0;
+//			}
+
+			if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == GPIO_PIN_SET){
+				fall_state = 0; // that means that the user has indicated that he is ok
+				delay_ms = 1000; // go back to blinking the LED slowly
+
+				char cancel_msg[] = "\r\n--- USER PRESSED 'I AM OK'. ALARM CANCELLED! HE IS ALRIGHT! ---\r\n\n";
+				HAL_UART_Transmit(&huart1, (uint8_t*)cancel_msg, strlen(cancel_msg), HAL_MAX_DELAY);
+				HAL_Delay(300);
+
+			} else if (now - fall_alert_start_tick > fall_alert_duration_ms){ // if the duration exceeds 10 seconds
+				char emergency_msg[] = "\r\n!!! NO RESPONSE. INITIATING EMERGENCY PROTOCOL !!!\r\n\n";
+				HAL_UART_Transmit(&huart1, (uint8_t*)emergency_msg, strlen(emergency_msg), HAL_MAX_DELAY);
+				fall_state = 0;
+			}
+		}
+
+		/***************************UART transmission*******************************************/
+		char buffer[200]; // Create a buffer large enough to hold the text
+
+		if(i>=3)
+		{
+			sprintf(buffer,
+					"AccelMag:%f GyroMag:%f Pressure:%f State:%d PressureOK:%d\r\n",
+					accelerationMagnitude, gyroMagnitude, current_pressure, fall_state, pressure_confirmed ? 1 : 0);
+			HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
+		}
+
+		i++;
 	}
-
-
 }
 
 
@@ -194,9 +270,21 @@ int mov_avg_C(int N, int* accel_buff)
 		result+=accel_buff[i];
 	}
 
-	result=result/4;
+	result=result/N;
 
 	return result;
+}
+
+static void User_Button_Init() {
+	// Enable the clock for GPIO Port C
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+
+	// Configure PC13 as an input pin
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+	GPIO_InitStruct.Pin = GPIO_PIN_13;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 }
 
 static void UART1_Init(void)
