@@ -76,13 +76,13 @@ int main(void)
 	static uint32_t fall_alert_start_tick = 0;
 
 	// Thresholds (tune later with UART prints)
-	const float free_fall_threshold = 5.0f;   // m/s^2  (below this indicates near freefall)
-	const float impact_threshold    = 20.0f;  // m/s^2  (above this indicates impact spike)
+	const float free_fall_threshold = 7.5f;   // m/s^2  (below this indicates near freefall)
+	const float impact_threshold    = 15.0f;  // m/s^2  (above this indicates impact spike)
 	const float still_gyro_threshold = 80.0f; // dps-ish (must be low to indicate lying still)
 	const float pressure_rise_threshold = 0.10f; // hPa increase indicates lower altitude
 
-	const uint32_t freefall_timeout_ms = 600;      // must see impact within this window
-	const uint32_t stillness_window_ms = 800;      // time after impact to look for stillness
+	const uint32_t freefall_timeout_ms = 1200;      // must see impact within this window
+	const uint32_t stillness_window_ms = 2000;      // time after impact to look for stillness
 	const uint32_t fall_alert_duration_ms = 10000;  // fast blink duration then reset to normal, this will be set to 10 seconds
 
 	while (1)
@@ -205,6 +205,8 @@ int main(void)
 					fall_state = 3;
 					fall_alert_start_tick = now;
 					delay_ms = 100; // fast blinking to indicate fall
+					char gyro_alert[] = "\r\n*** FALL DETECTED (Gyro Stillness Confirmed)! ***\r\n--- Waiting 10 seconds for User OK Button... ---\r\n\n";
+					HAL_UART_Transmit(&huart1, (uint8_t*)gyro_alert, strlen(gyro_alert), HAL_MAX_DELAY);
 				}
 				else if (pressure_confirmed)
 				{
@@ -212,6 +214,9 @@ int main(void)
 					fall_state = 3;
 					fall_alert_start_tick = now;
 					delay_ms = 100; // fast blinking to indicate fall
+					char pressure_alert[] = "\r\n*** FALL DETECTED (Barometer Drop Confirmed)! ***\r\n--- Waiting 10 seconds for User OK Button... ---\r\n\n";
+					HAL_UART_Transmit(&huart1, (uint8_t*)pressure_alert, strlen(pressure_alert), HAL_MAX_DELAY);
+
 				}
 			}
 			else
@@ -230,7 +235,7 @@ int main(void)
 //				fall_state = 0;
 //			}
 
-			if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == GPIO_PIN_SET){
+			if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == GPIO_PIN_RESET){
 				fall_state = 0; // that means that the user has indicated that he is ok
 				delay_ms = 1000; // go back to blinking the LED slowly
 
@@ -283,7 +288,7 @@ static void User_Button_Init() {
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 	GPIO_InitStruct.Pin = GPIO_PIN_13;
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Pull = GPIO_PULLUP;
 	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 }
 
