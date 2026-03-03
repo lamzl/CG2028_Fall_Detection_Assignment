@@ -51,7 +51,11 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.h \
  ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/lps22hb/lps22hb.h \
  ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/lps22hb/../Common/psensor.h \
- ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/lps22hb/../Common/tsensor.h
+ ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/lps22hb/../Common/tsensor.h \
+ ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.h \
+ ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/st25dv/st25dv.h \
+ ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/st25dv/st25dv_reg.h \
+ ../Drivers/CMSIS/Include/cmsis_compiler.h
 ../Core/Inc/main.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:
 ../Core/Inc/stm32l4xx_hal_conf.h:
@@ -106,3 +110,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/lps22hb/lps22hb.h:
 ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/lps22hb/../Common/psensor.h:
 ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/lps22hb/../Common/tsensor.h:
+../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.h:
+../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/st25dv/st25dv.h:
+../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/st25dv/st25dv_reg.h:
+../Drivers/CMSIS/Include/cmsis_compiler.h:

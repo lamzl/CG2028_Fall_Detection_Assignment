@@ -13,7 +13,7 @@
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.h"
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.h"
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.h"
-
+#include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.h"
 #include <stdio.h>
 #include "string.h"
 #include <sys/stat.h>
@@ -31,7 +31,7 @@ UART_HandleTypeDef huart1;
 
 int main(void)
 {
-	const int N=4;
+const int N=4;
 
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
@@ -50,6 +50,13 @@ int main(void)
 
 	/*Set the initial LED state to off*/
 	BSP_LED_Off(LED2);
+
+	/* NFC IO Activate*/
+	if (BSP_NFCTAG_Init(0) != NFCTAG_OK) {
+
+	    char nfc_err[] = "NFC Init Failed!\r\n";
+	    HAL_UART_Transmit(&huart1, (uint8_t*)nfc_err, strlen(nfc_err), HAL_MAX_DELAY);
+	}
 
 	int accel_buff_x[4]={0};
 	int accel_buff_y[4]={0};
@@ -76,14 +83,14 @@ int main(void)
 	static uint32_t fall_alert_start_tick = 0;
 
 	// Thresholds (tune later with UART prints)
-	const float free_fall_threshold = 7.5f;   // m/s^2  (below this indicates near freefall)
-	const float impact_threshold    = 15.0f;  // m/s^2  (above this indicates impact spike)
-	const float still_gyro_threshold = 80.0f; // dps-ish (must be low to indicate lying still)
-	const float pressure_rise_threshold = 0.10f; // hPa increase indicates lower altitude
+	const float free_fall_threshold = 6.5f;   // m/s^2  (below this indicates near freefall)
+	const float impact_threshold    = 19.5f;  // m/s^2  (above this indicates impact spike)
+	const float still_gyro_threshold = 80.0f; // dps (must be low to indicate lying still)
+	const float pressure_rise_threshold = 0.10f; // hPa increase indicates lower altitude (about 0.8 to 1.0 metres)
 
 	const uint32_t freefall_timeout_ms = 1200;      // must see impact within this window
 	const uint32_t stillness_window_ms = 2000;      // time after impact to look for stillness
-	const uint32_t fall_alert_duration_ms = 10000;  // fast blink duration then reset to normal, this will be set to 10 seconds
+	const uint32_t fall_alert_duration_ms = 1500000;  // fast blink duration then reset to normal, this will be set to 1500 seconds
 
 	while (1)
 	{
@@ -126,6 +133,9 @@ int main(void)
 
 		// ********* Read barometer values *********/
 		current_pressure = BSP_PSENSOR_ReadPressure();
+		static float smoothed_pressure = 0;
+		if (smoothed_pressure == 0) smoothed_pressure = current_pressure;
+		smoothed_pressure = (smoothed_pressure * 0.8f) + (current_pressure * 0.2f); // low pass filter
 
 		//Preprocessing the filtered outputs  The same needs to be done for the output from the C program as well
 		float accel_filt_asm[3]={0}; // final value of filtered acceleration values
@@ -153,6 +163,15 @@ int main(void)
 		float gyroMagnitude = sqrt((gyro_velocity[0] * gyro_velocity[0]) + (gyro_velocity[1] * gyro_velocity[1])
 				+ gyro_velocity[2] * gyro_velocity[2]);
 
+		// ******** Posture Detection ********/
+		// We calculate the Pitch and Roll angles using trigonometry to determine if the user is lying down.
+		// A standing person has a pitch and roll near 0. If they are on the floor, pitch or roll approaches 90 or -90 degrees.
+		//float pitch_deg = atan2f(accel_filt_asm[0], sqrtf((accel_filt_asm[1] * accel_filt_asm[1]) + (accel_filt_asm[2] * accel_filt_asm[2]))) * (180.0f / 3.14159265f);
+		//float roll_deg  = atan2f(accel_filt_asm[1], sqrtf((accel_filt_asm[0] * accel_filt_asm[0]) + (accel_filt_asm[2] * accel_filt_asm[2]))) * (180.0f / 3.14159265f);
+
+		// Flag if the device has tilted more than 60 degrees from vertical
+		//bool is_lying_down = (fabs(pitch_deg) > 60.0f) || (fabs(roll_deg) > 60.0f);
+
 		// State machine:
 		// 0 NORMAL -> 1 FREEFALL when accel drops
 		// 1 FREEFALL -> 2 IMPACT_WAIT_STILL when impact spike occurs
@@ -168,7 +187,7 @@ int main(void)
 			{
 				fall_state = 1;
 				freefall_start_tick = now;
-				pressure_baseline = current_pressure; // capture baseline at free-fall start
+				pressure_baseline = smoothed_pressure; // capture baseline at free-fall start
 			}
 		}
 		else if (fall_state == 1)
@@ -181,69 +200,56 @@ int main(void)
 			else
 			{
 				// Barometer can confirm drop (pressure increases when lower)
-				if ((current_pressure - pressure_baseline) > pressure_rise_threshold)
-				{
+				if ((smoothed_pressure - pressure_baseline) > pressure_rise_threshold){
 					pressure_confirmed = true;
 				}
 
-				if (accelerationMagnitude > impact_threshold)
-				{
+				if (accelerationMagnitude > impact_threshold){
 					fall_state = 2;
 					impact_tick = now;
 				}
 			}
 		}
-		else if (fall_state == 2)
-		{
-			// We do NOT require high gyro here (because lifting causes high gyro).
-			// Instead, after impact, we look for "stillness" (gyro low) typical of lying on floor.
-			if ((now - impact_tick) <= stillness_window_ms)
-			{
-				if (gyroMagnitude < still_gyro_threshold)
-				{
-					// Confirm fall (impact + then still)
-					fall_state = 3;
-					fall_alert_start_tick = now;
-					delay_ms = 100; // fast blinking to indicate fall
-					char gyro_alert[] = "\r\n*** FALL DETECTED (Gyro Stillness Confirmed)! ***\r\n--- Waiting 10 seconds for User OK Button... ---\r\n\n";
-					HAL_UART_Transmit(&huart1, (uint8_t*)gyro_alert, strlen(gyro_alert), HAL_MAX_DELAY);
-				}
-				else if (pressure_confirmed)
-				{
-					// Alternate confirm: impact + pressure rise sustained
-					fall_state = 3;
-					fall_alert_start_tick = now;
-					delay_ms = 100; // fast blinking to indicate fall
-					char pressure_alert[] = "\r\n*** FALL DETECTED (Barometer Drop Confirmed)! ***\r\n--- Waiting 10 seconds for User OK Button... ---\r\n\n";
-					HAL_UART_Transmit(&huart1, (uint8_t*)pressure_alert, strlen(pressure_alert), HAL_MAX_DELAY);
-
-				}
+		else if (fall_state == 2){
+			// check the barometer again
+			if ((current_pressure - pressure_baseline) > pressure_rise_threshold){
+				pressure_confirmed = true;
 			}
-			else
-			{
+
+			//
+			if ((now - impact_tick) <= stillness_window_ms){
+				if (now-impact_tick > 500){
+					if (gyroMagnitude < still_gyro_threshold && pressure_confirmed /*&& is_lying_down*/){
+					fall_state = 3;
+					fall_alert_start_tick = now;
+					char nfc_info[64];
+					sprintf(nfc_info, "FALL! Time: %lu s", now / 1000);
+					NFC_Format_And_Write("ALERT: Fall Detected!");
+					delay_ms = 100; // fast blinking to indicate fall
+
+					char gyro_alert[] = "\r\n*** FALL DETECTED! ***\r\n--- Waiting 15 seconds for User OK Button... ---\r\n\n";
+					HAL_UART_Transmit(&huart1, (uint8_t*)gyro_alert, strlen(gyro_alert), HAL_MAX_DELAY);
+					}
+				}
+
+			} else {
 				// If we didn't get confirmation soon after impact, reset
 				fall_state = 0;
 			}
-		}
-		else if (fall_state == 3)
-		{
-			delay_ms = 100; // fast blinking to indicate fall
 
-//			// Auto reset after alert duration so it doesn't blink forever
-//			if ((now - fall_alert_start_tick) > fall_alert_duration_ms)
-//			{
-//				fall_state = 0;
-//			}
+		} else if (fall_state == 3){
+			delay_ms = 100; // fast blinking to indicate fall
 
 			if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == GPIO_PIN_RESET){
 				fall_state = 0; // that means that the user has indicated that he is ok
+				NFC_Format_And_Write("Status: User is OK.");
 				delay_ms = 1000; // go back to blinking the LED slowly
 
 				char cancel_msg[] = "\r\n--- USER PRESSED 'I AM OK'. ALARM CANCELLED! HE IS ALRIGHT! ---\r\n\n";
 				HAL_UART_Transmit(&huart1, (uint8_t*)cancel_msg, strlen(cancel_msg), HAL_MAX_DELAY);
 				HAL_Delay(300);
 
-			} else if (now - fall_alert_start_tick > fall_alert_duration_ms){ // if the duration exceeds 10 seconds
+			} else if (now - fall_alert_start_tick > fall_alert_duration_ms){
 				char emergency_msg[] = "\r\n!!! NO RESPONSE. INITIATING EMERGENCY PROTOCOL !!!\r\n\n";
 				HAL_UART_Transmit(&huart1, (uint8_t*)emergency_msg, strlen(emergency_msg), HAL_MAX_DELAY);
 				fall_state = 0;
@@ -256,8 +262,8 @@ int main(void)
 		if(i>=3)
 		{
 			sprintf(buffer,
-					"AccelMag:%f GyroMag:%f Pressure:%f State:%d PressureOK:%d\r\n",
-					accelerationMagnitude, gyroMagnitude, current_pressure, fall_state, pressure_confirmed ? 1 : 0);
+					"AccelMag:%f GyroMag:%f Pressure:%f State:%d pressureDetected:%d\r\n",
+					accelerationMagnitude, gyroMagnitude, smoothed_pressure, fall_state, pressure_confirmed ? 1 : 0);
 			HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
 		}
 
@@ -265,7 +271,52 @@ int main(void)
 	}
 }
 
+void NFC_Format_And_Write(char* message) {
+    int32_t ret;
+    char dbg[100];
+    // Per ST AN4911: E1 40 40 00 is the correct CC for ST25DV04K + smartphone
+    //   0xE1 = Magic number (NDEF Type 5 tag)
+    //   0x40 = Version 1.0, read/write access
+    //   0x40 = MLEN: 0x40 * 8 = 512 bytes (full memory for ST25DV04K)
+    //   0x00 = No additional features
+    uint8_t cc_file[4] = { 0xE1, 0x40, 0x40, 0x00 };
 
+    ret = BSP_NFCTAG_WriteData(0, cc_file, 0x0000, 4);
+    sprintf(dbg, "CC Write ret: %ld\r\n", ret);
+    HAL_UART_Transmit(&huart1, (uint8_t*)dbg, strlen(dbg), HAL_MAX_DELAY);
+    HAL_Delay(10);
+    // Type 5 tag layout after CC (starting at 0x0004):
+    //   0x03         = NDEF Message TLV type
+    //   <length>     = NDEF record byte count
+    //   <NDEF record bytes>
+    //   0xFE         = Terminator TLV
+
+    uint8_t payload_len = (uint8_t)strlen(message);
+    uint8_t ndef_record_len = 7 + payload_len; // header(4) + type(1) + status(1) + lang(2) + msg
+
+    uint8_t buf[256] = {0};
+    uint8_t idx = 0;
+
+    buf[idx++] = 0x03;             // NDEF Message TLV
+    buf[idx++] = ndef_record_len;  // Length
+
+    buf[idx++] = 0xD1;             // MB=1, ME=1, SR=1, TNF=Well-Known
+    buf[idx++] = 0x01;             // Type Length = 1
+    buf[idx++] = payload_len + 3;  // Payload Length (status + "en" + message)
+    buf[idx++] = 0x54;             // Type = 'T' (Text record)
+    buf[idx++] = 0x02;             // UTF-8, 2-char language code
+    buf[idx++] = 0x65;             // 'e'
+    buf[idx++] = 0x6E;             // 'n'
+    memcpy(&buf[idx], message, payload_len);
+    idx += payload_len;
+
+    buf[idx++] = 0xFE;             // Terminator TLV
+
+    // Write NDEF data starting at 0x0004 (right after 4-byte CC)
+    ret = BSP_NFCTAG_WriteData(0, buf, 0x0004, idx);
+    sprintf(dbg, "NDEF Write ret: %ld, total bytes: %d\r\n", ret, idx);
+    HAL_UART_Transmit(&huart1, (uint8_t*)dbg, strlen(dbg), HAL_MAX_DELAY);
+}
 
 int mov_avg_C(int N, int* accel_buff)
 { 	// The implementation below is inefficient and meant only for verifying your results.
@@ -334,3 +385,5 @@ int _isatty(int file) { return 1; }
 int _close(int file) { return -1; }
 int _getpid(void) { return 1; }
 int _kill(int pid, int sig) { return -1; }
+
+
