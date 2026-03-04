@@ -82,7 +82,7 @@ const int N=4;
 	static uint32_t impact_tick = 0;
 	static uint32_t fall_alert_start_tick = 0;
 
-	// Thresholds (tune later with UART prints)
+	// Thresholds
 	const float free_fall_threshold = 6.5f;   // m/s^2  (below this indicates near freefall)
 	const float impact_threshold    = 19.5f;  // m/s^2  (above this indicates impact spike)
 	const float still_gyro_threshold = 80.0f; // dps (must be low to indicate lying still)
@@ -219,13 +219,13 @@ const int N=4;
 			//
 			if ((now - impact_tick) <= stillness_window_ms){
 				if (now-impact_tick > 500){
-					if (gyroMagnitude < still_gyro_threshold && pressure_confirmed /*&& is_lying_down*/){
+					if (gyroMagnitude < still_gyro_threshold && pressure_confirmed){
 					fall_state = 3;
 					fall_alert_start_tick = now;
 					delay_ms = 100; // fast blinking to indicate fall
 
 					// Create the string to indicate the time stamp
-					char time_str[64];
+					char time_str[128];
 					// 1. Define the time you usually turn on/reset the board
 					// 2:40 PM Presentation time (We need to hard-code the time as there is no clock running in the background when the board is asleep)
 					uint32_t boot_time_sgt_seconds = (14 * 3600) + (40 * 60) + 0;
@@ -242,7 +242,13 @@ const int N=4;
 					uint32_t seconds = current_time_seconds % 60;
 
 					// Write to NFC and UART
-					sprintf(time_str, "ALERT: Fall Detected at %02lu:%02lu:%02lu SGT", hours, minutes, seconds);
+					sprintf(time_str, "PATIENT: Ethan Lam \n"
+			                "STATUS: FALL DETECTED\n"
+			                "TIME: %02lu:%02lu:%02lu SGT\n"
+			                "VITAL: Stillness Detected\n"
+							"BLOOD TYPE: O+\n"
+							"AGE: 67 years"
+							, hours, minutes, seconds);
 					NFC_Format_And_Write(time_str);
 
 

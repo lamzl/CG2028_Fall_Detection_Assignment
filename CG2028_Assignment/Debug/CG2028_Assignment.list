@@ -7,23 +7,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   1 .text         000082d0  080001c0  080001c0  000011c0  2**4
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .rodata       00000580  08008490  08008490  00009490  2**3
+  2 .rodata       000005d0  08008490  08008490  00009490  2**3
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  3 .ARM.extab    00000000  08008a10  08008a10  0000a268  2**0
+  3 .ARM.extab    00000000  08008a60  08008a60  0000a268  2**0
                   CONTENTS
-  4 .ARM          00000008  08008a10  08008a10  00009a10  2**2
+  4 .ARM          00000008  08008a60  08008a60  00009a60  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  5 .preinit_array 00000000  08008a18  08008a18  0000a268  2**0
+  5 .preinit_array 00000000  08008a68  08008a68  0000a268  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  6 .init_array   00000004  08008a18  08008a18  00009a18  2**2
+  6 .init_array   00000004  08008a68  08008a68  00009a68  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  7 .fini_array   00000004  08008a1c  08008a1c  00009a1c  2**2
+  7 .fini_array   00000004  08008a6c  08008a6c  00009a6c  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  8 .data         00000268  20000000  08008a20  0000a000  2**2
+  8 .data         00000268  20000000  08008a70  0000a000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  9 .bss          000002a4  20000268  08008c88  0000a268  2**2
+  9 .bss          000002a4  20000268  08008cd8  0000a268  2**2
                   ALLOC
- 10 ._user_heap_stack 00000604  2000050c  08008c88  0000a50c  2**0
+ 10 ._user_heap_stack 00000604  2000050c  08008cd8  0000a50c  2**0
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  0000a268  2**0
                   CONTENTS, READONLY
@@ -1325,11 +1325,11 @@ UART_HandleTypeDef huart1;
 int main(void)
 {
  8000fc8:	e92d 43f0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, lr}
- 8000fcc:	f5ad 7d03 	sub.w	sp, sp, #524	@ 0x20c
+ 8000fcc:	f5ad 7d07 	sub.w	sp, sp, #540	@ 0x21c
  8000fd0:	af06      	add	r7, sp, #24
 const int N=4;
  8000fd2:	2304      	movs	r3, #4
- 8000fd4:	f8c7 31d4 	str.w	r3, [r7, #468]	@ 0x1d4
+ 8000fd4:	f8c7 31e4 	str.w	r3, [r7, #484]	@ 0x1e4
 
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
@@ -1369,7 +1369,7 @@ const int N=4;
 
 	    char nfc_err[] = "NFC Init Failed!\r\n";
  8001008:	4bdb      	ldr	r3, [pc, #876]	@ (8001378 <main+0x3b0>)
- 800100a:	f507 74a2 	add.w	r4, r7, #324	@ 0x144
+ 800100a:	f507 74aa 	add.w	r4, r7, #340	@ 0x154
  800100e:	461d      	mov	r5, r3
  8001010:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
  8001012:	c40f      	stmia	r4!, {r0, r1, r2, r3}
@@ -1380,33 +1380,33 @@ const int N=4;
  800101c:	0c1b      	lsrs	r3, r3, #16
  800101e:	7023      	strb	r3, [r4, #0]
 	    HAL_UART_Transmit(&huart1, (uint8_t*)nfc_err, strlen(nfc_err), HAL_MAX_DELAY);
- 8001020:	f507 73a2 	add.w	r3, r7, #324	@ 0x144
+ 8001020:	f507 73aa 	add.w	r3, r7, #340	@ 0x154
  8001024:	4618      	mov	r0, r3
  8001026:	f7ff f94b 	bl	80002c0 <strlen>
  800102a:	4603      	mov	r3, r0
  800102c:	b29a      	uxth	r2, r3
- 800102e:	f507 71a2 	add.w	r1, r7, #324	@ 0x144
+ 800102e:	f507 71aa 	add.w	r1, r7, #340	@ 0x154
  8001032:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
  8001036:	48d1      	ldr	r0, [pc, #836]	@ (800137c <main+0x3b4>)
  8001038:	f003 fd2a 	bl	8004a90 <HAL_UART_Transmit>
 	}
 
 	int accel_buff_x[4]={0};
- 800103c:	f507 73bc 	add.w	r3, r7, #376	@ 0x178
+ 800103c:	f507 73c4 	add.w	r3, r7, #392	@ 0x188
  8001040:	2200      	movs	r2, #0
  8001042:	601a      	str	r2, [r3, #0]
  8001044:	605a      	str	r2, [r3, #4]
  8001046:	609a      	str	r2, [r3, #8]
  8001048:	60da      	str	r2, [r3, #12]
 	int accel_buff_y[4]={0};
- 800104a:	f507 73b4 	add.w	r3, r7, #360	@ 0x168
+ 800104a:	f507 73bc 	add.w	r3, r7, #376	@ 0x178
  800104e:	2200      	movs	r2, #0
  8001050:	601a      	str	r2, [r3, #0]
  8001052:	605a      	str	r2, [r3, #4]
  8001054:	609a      	str	r2, [r3, #8]
  8001056:	60da      	str	r2, [r3, #12]
 	int accel_buff_z[4]={0};
- 8001058:	f507 73ac 	add.w	r3, r7, #344	@ 0x158
+ 8001058:	f507 73b4 	add.w	r3, r7, #360	@ 0x168
  800105c:	2200      	movs	r2, #0
  800105e:	601a      	str	r2, [r3, #0]
  8001060:	605a      	str	r2, [r3, #4]
@@ -1414,33 +1414,33 @@ const int N=4;
  8001064:	60da      	str	r2, [r3, #12]
 	int i=0;
  8001066:	2300      	movs	r3, #0
- 8001068:	f8c7 31ec 	str.w	r3, [r7, #492]	@ 0x1ec
+ 8001068:	f8c7 31fc 	str.w	r3, [r7, #508]	@ 0x1fc
 
 	// Timing: non-blocking sampling + non-blocking LED blink
 	uint32_t last_sample_tick = 0;
  800106c:	2300      	movs	r3, #0
- 800106e:	f8c7 31e8 	str.w	r3, [r7, #488]	@ 0x1e8
+ 800106e:	f8c7 31f8 	str.w	r3, [r7, #504]	@ 0x1f8
 	uint32_t last_led_tick = 0;
  8001072:	2300      	movs	r3, #0
- 8001074:	f8c7 31e4 	str.w	r3, [r7, #484]	@ 0x1e4
+ 8001074:	f8c7 31f4 	str.w	r3, [r7, #500]	@ 0x1f4
 	const uint32_t sample_period_ms = 50;
  8001078:	2332      	movs	r3, #50	@ 0x32
- 800107a:	f8c7 31d0 	str.w	r3, [r7, #464]	@ 0x1d0
+ 800107a:	f8c7 31e0 	str.w	r3, [r7, #480]	@ 0x1e0
 
 	int delay_ms=1000; //change delay time to suit your code
  800107e:	f44f 737a 	mov.w	r3, #1000	@ 0x3e8
- 8001082:	f8c7 31e0 	str.w	r3, [r7, #480]	@ 0x1e0
+ 8001082:	f8c7 31f0 	str.w	r3, [r7, #496]	@ 0x1f0
 
 	// Barometer baseline / confirmation
 	float pressure_baseline = BSP_PSENSOR_ReadPressure();
  8001086:	f001 fb27 	bl	80026d8 <BSP_PSENSOR_ReadPressure>
- 800108a:	ed87 0a77 	vstr	s0, [r7, #476]	@ 0x1dc
+ 800108a:	ed87 0a7b 	vstr	s0, [r7, #492]	@ 0x1ec
 	float current_pressure = pressure_baseline;
- 800108e:	f8d7 31dc 	ldr.w	r3, [r7, #476]	@ 0x1dc
- 8001092:	f8c7 31cc 	str.w	r3, [r7, #460]	@ 0x1cc
+ 800108e:	f8d7 31ec 	ldr.w	r3, [r7, #492]	@ 0x1ec
+ 8001092:	f8c7 31dc 	str.w	r3, [r7, #476]	@ 0x1dc
 	bool pressure_confirmed = false;
  8001096:	2300      	movs	r3, #0
- 8001098:	f887 31db 	strb.w	r3, [r7, #475]	@ 0x1db
+ 8001098:	f887 31eb 	strb.w	r3, [r7, #491]	@ 0x1eb
 	static uint32_t freefall_start_tick = 0;
 	static uint32_t impact_tick = 0;
 	static uint32_t fall_alert_start_tick = 0;
@@ -1448,39 +1448,39 @@ const int N=4;
 	// Thresholds (tune later with UART prints)
 	const float free_fall_threshold = 6.5f;   // m/s^2  (below this indicates near freefall)
  800109c:	4bb8      	ldr	r3, [pc, #736]	@ (8001380 <main+0x3b8>)
- 800109e:	f8c7 31c8 	str.w	r3, [r7, #456]	@ 0x1c8
+ 800109e:	f8c7 31d8 	str.w	r3, [r7, #472]	@ 0x1d8
 	const float impact_threshold    = 19.5f;  // m/s^2  (above this indicates impact spike)
  80010a2:	4bb8      	ldr	r3, [pc, #736]	@ (8001384 <main+0x3bc>)
- 80010a4:	f8c7 31c4 	str.w	r3, [r7, #452]	@ 0x1c4
+ 80010a4:	f8c7 31d4 	str.w	r3, [r7, #468]	@ 0x1d4
 	const float still_gyro_threshold = 80.0f; // dps (must be low to indicate lying still)
  80010a8:	4bb7      	ldr	r3, [pc, #732]	@ (8001388 <main+0x3c0>)
- 80010aa:	f8c7 31c0 	str.w	r3, [r7, #448]	@ 0x1c0
+ 80010aa:	f8c7 31d0 	str.w	r3, [r7, #464]	@ 0x1d0
 	const float pressure_rise_threshold = 0.10f; // hPa increase indicates lower altitude (about 0.8 to 1.0 metres)
  80010ae:	4bb7      	ldr	r3, [pc, #732]	@ (800138c <main+0x3c4>)
- 80010b0:	f8c7 31bc 	str.w	r3, [r7, #444]	@ 0x1bc
+ 80010b0:	f8c7 31cc 	str.w	r3, [r7, #460]	@ 0x1cc
 
 	const uint32_t freefall_timeout_ms = 1200;      // must see impact within this window
  80010b4:	f44f 6396 	mov.w	r3, #1200	@ 0x4b0
- 80010b8:	f8c7 31b8 	str.w	r3, [r7, #440]	@ 0x1b8
+ 80010b8:	f8c7 31c8 	str.w	r3, [r7, #456]	@ 0x1c8
 	const uint32_t stillness_window_ms = 2000;      // time after impact to look for stillness
  80010bc:	f44f 63fa 	mov.w	r3, #2000	@ 0x7d0
- 80010c0:	f8c7 31b4 	str.w	r3, [r7, #436]	@ 0x1b4
+ 80010c0:	f8c7 31c4 	str.w	r3, [r7, #452]	@ 0x1c4
 	const uint32_t fall_alert_duration_ms = 15000;  // fast blink duration then reset to normal, this will be set to 15 seconds
  80010c4:	f643 2398 	movw	r3, #15000	@ 0x3a98
- 80010c8:	f8c7 31b0 	str.w	r3, [r7, #432]	@ 0x1b0
+ 80010c8:	f8c7 31c0 	str.w	r3, [r7, #448]	@ 0x1c0
 
 	while (1)
 	{
 		uint32_t now = HAL_GetTick();
  80010cc:	f002 f868 	bl	80031a0 <HAL_GetTick>
- 80010d0:	f8c7 01ac 	str.w	r0, [r7, #428]	@ 0x1ac
+ 80010d0:	f8c7 01bc 	str.w	r0, [r7, #444]	@ 0x1bc
 
 		// Non-blocking LED blink: toggle based on delay_ms
 		if ((now - last_led_tick) >= (uint32_t)delay_ms)
- 80010d4:	f8d7 21ac 	ldr.w	r2, [r7, #428]	@ 0x1ac
- 80010d8:	f8d7 31e4 	ldr.w	r3, [r7, #484]	@ 0x1e4
+ 80010d4:	f8d7 21bc 	ldr.w	r2, [r7, #444]	@ 0x1bc
+ 80010d8:	f8d7 31f4 	ldr.w	r3, [r7, #500]	@ 0x1f4
  80010dc:	1ad2      	subs	r2, r2, r3
- 80010de:	f8d7 31e0 	ldr.w	r3, [r7, #480]	@ 0x1e0
+ 80010de:	f8d7 31f0 	ldr.w	r3, [r7, #496]	@ 0x1f0
  80010e2:	429a      	cmp	r2, r3
  80010e4:	d306      	bcc.n	80010f4 <main+0x12c>
 		{
@@ -1488,40 +1488,40 @@ const int N=4;
  80010e6:	2000      	movs	r0, #0
  80010e8:	f000 ff32 	bl	8001f50 <BSP_LED_Toggle>
 			last_led_tick = now;
- 80010ec:	f8d7 31ac 	ldr.w	r3, [r7, #428]	@ 0x1ac
- 80010f0:	f8c7 31e4 	str.w	r3, [r7, #484]	@ 0x1e4
+ 80010ec:	f8d7 31bc 	ldr.w	r3, [r7, #444]	@ 0x1bc
+ 80010f0:	f8c7 31f4 	str.w	r3, [r7, #500]	@ 0x1f4
 		}
 
 		// Run the sensor + detection logic every 50ms (non-blocking)
 		if ((now - last_sample_tick) < sample_period_ms)
- 80010f4:	f8d7 21ac 	ldr.w	r2, [r7, #428]	@ 0x1ac
- 80010f8:	f8d7 31e8 	ldr.w	r3, [r7, #488]	@ 0x1e8
+ 80010f4:	f8d7 21bc 	ldr.w	r2, [r7, #444]	@ 0x1bc
+ 80010f8:	f8d7 31f8 	ldr.w	r3, [r7, #504]	@ 0x1f8
  80010fc:	1ad3      	subs	r3, r2, r3
- 80010fe:	f8d7 21d0 	ldr.w	r2, [r7, #464]	@ 0x1d0
+ 80010fe:	f8d7 21e0 	ldr.w	r2, [r7, #480]	@ 0x1e0
  8001102:	429a      	cmp	r2, r3
  8001104:	f200 83be 	bhi.w	8001884 <main+0x8bc>
 		{
 			continue;
 		}
 		last_sample_tick = now;
- 8001108:	f8d7 31ac 	ldr.w	r3, [r7, #428]	@ 0x1ac
- 800110c:	f8c7 31e8 	str.w	r3, [r7, #488]	@ 0x1e8
+ 8001108:	f8d7 31bc 	ldr.w	r3, [r7, #444]	@ 0x1bc
+ 800110c:	f8c7 31f8 	str.w	r3, [r7, #504]	@ 0x1f8
 
 		int16_t accel_data_i16[3] = { 0 };			// array to store the x, y and z readings of accelerometer
- 8001110:	f507 739e 	add.w	r3, r7, #316	@ 0x13c
+ 8001110:	f507 73a6 	add.w	r3, r7, #332	@ 0x14c
  8001114:	2200      	movs	r2, #0
  8001116:	601a      	str	r2, [r3, #0]
  8001118:	809a      	strh	r2, [r3, #4]
 		/********Function call to read accelerometer values*********/
 		BSP_ACCELERO_AccGetXYZ(accel_data_i16);
- 800111a:	f507 739e 	add.w	r3, r7, #316	@ 0x13c
+ 800111a:	f507 73a6 	add.w	r3, r7, #332	@ 0x14c
  800111e:	4618      	mov	r0, r3
  8001120:	f001 f9d0 	bl	80024c4 <BSP_ACCELERO_AccGetXYZ>
 
 		//Copy the values over to a circular style buffer
 		accel_buff_x[i%4]=accel_data_i16[0]; //acceleration along X-Axis
- 8001124:	f9b7 113c 	ldrsh.w	r1, [r7, #316]	@ 0x13c
- 8001128:	f8d7 31ec 	ldr.w	r3, [r7, #492]	@ 0x1ec
+ 8001124:	f9b7 114c 	ldrsh.w	r1, [r7, #332]	@ 0x14c
+ 8001128:	f8d7 31fc 	ldr.w	r3, [r7, #508]	@ 0x1fc
  800112c:	425a      	negs	r2, r3
  800112e:	f003 0303 	and.w	r3, r3, #3
  8001132:	f002 0203 	and.w	r2, r2, #3
@@ -1529,12 +1529,12 @@ const int N=4;
  8001138:	4253      	negpl	r3, r2
  800113a:	460a      	mov	r2, r1
  800113c:	009b      	lsls	r3, r3, #2
- 800113e:	f503 73f8 	add.w	r3, r3, #496	@ 0x1f0
+ 800113e:	f503 7300 	add.w	r3, r3, #512	@ 0x200
  8001142:	443b      	add	r3, r7
  8001144:	f843 2c78 	str.w	r2, [r3, #-120]
 		accel_buff_y[i%4]=accel_data_i16[1]; //acceleration along Y-Axis
- 8001148:	f9b7 113e 	ldrsh.w	r1, [r7, #318]	@ 0x13e
- 800114c:	f8d7 31ec 	ldr.w	r3, [r7, #492]	@ 0x1ec
+ 8001148:	f9b7 114e 	ldrsh.w	r1, [r7, #334]	@ 0x14e
+ 800114c:	f8d7 31fc 	ldr.w	r3, [r7, #508]	@ 0x1fc
  8001150:	425a      	negs	r2, r3
  8001152:	f003 0303 	and.w	r3, r3, #3
  8001156:	f002 0203 	and.w	r2, r2, #3
@@ -1542,12 +1542,12 @@ const int N=4;
  800115c:	4253      	negpl	r3, r2
  800115e:	460a      	mov	r2, r1
  8001160:	009b      	lsls	r3, r3, #2
- 8001162:	f503 73f8 	add.w	r3, r3, #496	@ 0x1f0
+ 8001162:	f503 7300 	add.w	r3, r3, #512	@ 0x200
  8001166:	443b      	add	r3, r7
  8001168:	f843 2c88 	str.w	r2, [r3, #-136]
 		accel_buff_z[i%4]=accel_data_i16[2]; //acceleration along Z-Axis
- 800116c:	f9b7 1140 	ldrsh.w	r1, [r7, #320]	@ 0x140
- 8001170:	f8d7 31ec 	ldr.w	r3, [r7, #492]	@ 0x1ec
+ 800116c:	f9b7 1150 	ldrsh.w	r1, [r7, #336]	@ 0x150
+ 8001170:	f8d7 31fc 	ldr.w	r3, [r7, #508]	@ 0x1fc
  8001174:	425a      	negs	r2, r3
  8001176:	f003 0303 	and.w	r3, r3, #3
  800117a:	f002 0203 	and.w	r2, r2, #3
@@ -1555,34 +1555,34 @@ const int N=4;
  8001180:	4253      	negpl	r3, r2
  8001182:	460a      	mov	r2, r1
  8001184:	009b      	lsls	r3, r3, #2
- 8001186:	f503 73f8 	add.w	r3, r3, #496	@ 0x1f0
+ 8001186:	f503 7300 	add.w	r3, r3, #512	@ 0x200
  800118a:	443b      	add	r3, r7
  800118c:	f843 2c98 	str.w	r2, [r3, #-152]
 
 
 		// ********* Read gyroscope values *********/
 		float gyro_data[3]={0.0};
- 8001190:	f507 7398 	add.w	r3, r7, #304	@ 0x130
+ 8001190:	f507 73a0 	add.w	r3, r7, #320	@ 0x140
  8001194:	2200      	movs	r2, #0
  8001196:	601a      	str	r2, [r3, #0]
  8001198:	605a      	str	r2, [r3, #4]
  800119a:	609a      	str	r2, [r3, #8]
 		float* ptr_gyro=gyro_data;
- 800119c:	f507 7398 	add.w	r3, r7, #304	@ 0x130
- 80011a0:	f8c7 31a8 	str.w	r3, [r7, #424]	@ 0x1a8
+ 800119c:	f507 73a0 	add.w	r3, r7, #320	@ 0x140
+ 80011a0:	f8c7 31b8 	str.w	r3, [r7, #440]	@ 0x1b8
 		BSP_GYRO_GetXYZ(ptr_gyro);
- 80011a4:	f8d7 01a8 	ldr.w	r0, [r7, #424]	@ 0x1a8
+ 80011a4:	f8d7 01b8 	ldr.w	r0, [r7, #440]	@ 0x1b8
  80011a8:	f001 f9e8 	bl	800257c <BSP_GYRO_GetXYZ>
 
 		//The output of gyro has been made to display in dps(degree per second)
 		float gyro_velocity[3]={0.0};
- 80011ac:	f507 7392 	add.w	r3, r7, #292	@ 0x124
+ 80011ac:	f507 739a 	add.w	r3, r7, #308	@ 0x134
  80011b0:	2200      	movs	r2, #0
  80011b2:	601a      	str	r2, [r3, #0]
  80011b4:	605a      	str	r2, [r3, #4]
  80011b6:	609a      	str	r2, [r3, #8]
 		gyro_velocity[0]=(gyro_data[0]*9.8/(1000));
- 80011b8:	f8d7 3130 	ldr.w	r3, [r7, #304]	@ 0x130
+ 80011b8:	f8d7 3140 	ldr.w	r3, [r7, #320]	@ 0x140
  80011bc:	4618      	mov	r0, r3
  80011be:	f7ff f9eb 	bl	8000598 <__aeabi_f2d>
  80011c2:	a369      	add	r3, pc, #420	@ (adr r3, 8001368 <main+0x3a0>)
@@ -1601,9 +1601,9 @@ const int N=4;
  80011e4:	4619      	mov	r1, r3
  80011e6:	f7ff fd07 	bl	8000bf8 <__aeabi_d2f>
  80011ea:	4603      	mov	r3, r0
- 80011ec:	f8c7 3124 	str.w	r3, [r7, #292]	@ 0x124
+ 80011ec:	f8c7 3134 	str.w	r3, [r7, #308]	@ 0x134
 		gyro_velocity[1]=(gyro_data[1]*9.8/(1000));
- 80011f0:	f8d7 3134 	ldr.w	r3, [r7, #308]	@ 0x134
+ 80011f0:	f8d7 3144 	ldr.w	r3, [r7, #324]	@ 0x144
  80011f4:	4618      	mov	r0, r3
  80011f6:	f7ff f9cf 	bl	8000598 <__aeabi_f2d>
  80011fa:	a35b      	add	r3, pc, #364	@ (adr r3, 8001368 <main+0x3a0>)
@@ -1622,9 +1622,9 @@ const int N=4;
  800121c:	4619      	mov	r1, r3
  800121e:	f7ff fceb 	bl	8000bf8 <__aeabi_d2f>
  8001222:	4603      	mov	r3, r0
- 8001224:	f8c7 3128 	str.w	r3, [r7, #296]	@ 0x128
+ 8001224:	f8c7 3138 	str.w	r3, [r7, #312]	@ 0x138
 		gyro_velocity[2]=(gyro_data[2]*9.8/(1000));
- 8001228:	f8d7 3138 	ldr.w	r3, [r7, #312]	@ 0x138
+ 8001228:	f8d7 3148 	ldr.w	r3, [r7, #328]	@ 0x148
  800122c:	4618      	mov	r0, r3
  800122e:	f7ff f9b3 	bl	8000598 <__aeabi_f2d>
  8001232:	a34d      	add	r3, pc, #308	@ (adr r3, 8001368 <main+0x3a0>)
@@ -1643,12 +1643,12 @@ const int N=4;
  8001254:	4619      	mov	r1, r3
  8001256:	f7ff fccf 	bl	8000bf8 <__aeabi_d2f>
  800125a:	4603      	mov	r3, r0
- 800125c:	f8c7 312c 	str.w	r3, [r7, #300]	@ 0x12c
+ 800125c:	f8c7 313c 	str.w	r3, [r7, #316]	@ 0x13c
 
 		// ********* Read barometer values *********/
 		current_pressure = BSP_PSENSOR_ReadPressure();
  8001260:	f001 fa3a 	bl	80026d8 <BSP_PSENSOR_ReadPressure>
- 8001264:	ed87 0a73 	vstr	s0, [r7, #460]	@ 0x1cc
+ 8001264:	ed87 0a77 	vstr	s0, [r7, #476]	@ 0x1dc
 		static float smoothed_pressure = 0;
 		if (smoothed_pressure == 0) smoothed_pressure = current_pressure;
  8001268:	4b4a      	ldr	r3, [pc, #296]	@ (8001394 <main+0x3cc>)
@@ -1657,14 +1657,14 @@ const int N=4;
  8001272:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
  8001276:	d103      	bne.n	8001280 <main+0x2b8>
  8001278:	4a46      	ldr	r2, [pc, #280]	@ (8001394 <main+0x3cc>)
- 800127a:	f8d7 31cc 	ldr.w	r3, [r7, #460]	@ 0x1cc
+ 800127a:	f8d7 31dc 	ldr.w	r3, [r7, #476]	@ 0x1dc
  800127e:	6013      	str	r3, [r2, #0]
 		smoothed_pressure = (smoothed_pressure * 0.8f) + (current_pressure * 0.2f); // low pass filter
  8001280:	4b44      	ldr	r3, [pc, #272]	@ (8001394 <main+0x3cc>)
  8001282:	edd3 7a00 	vldr	s15, [r3]
  8001286:	ed9f 7a44 	vldr	s14, [pc, #272]	@ 8001398 <main+0x3d0>
  800128a:	ee27 7a87 	vmul.f32	s14, s15, s14
- 800128e:	edd7 7a73 	vldr	s15, [r7, #460]	@ 0x1cc
+ 800128e:	edd7 7a77 	vldr	s15, [r7, #476]	@ 0x1dc
  8001292:	eddf 6a42 	vldr	s13, [pc, #264]	@ 800139c <main+0x3d4>
  8001296:	ee67 7aa6 	vmul.f32	s15, s15, s13
  800129a:	ee77 7a27 	vadd.f32	s15, s14, s15
@@ -1673,16 +1673,16 @@ const int N=4;
 
 		//Preprocessing the filtered outputs  The same needs to be done for the output from the C program as well
 		float accel_filt_asm[3]={0}; // final value of filtered acceleration values
- 80012a4:	f507 738c 	add.w	r3, r7, #280	@ 0x118
+ 80012a4:	f507 7394 	add.w	r3, r7, #296	@ 0x128
  80012a8:	2200      	movs	r2, #0
  80012aa:	601a      	str	r2, [r3, #0]
  80012ac:	605a      	str	r2, [r3, #4]
  80012ae:	609a      	str	r2, [r3, #8]
 
 		accel_filt_asm[0]= (float)mov_avg(N,accel_buff_x) * (9.8/1000.0f);
- 80012b0:	f507 73bc 	add.w	r3, r7, #376	@ 0x178
+ 80012b0:	f507 73c4 	add.w	r3, r7, #392	@ 0x188
  80012b4:	4619      	mov	r1, r3
- 80012b6:	f8d7 01d4 	ldr.w	r0, [r7, #468]	@ 0x1d4
+ 80012b6:	f8d7 01e4 	ldr.w	r0, [r7, #484]	@ 0x1e4
  80012ba:	f7fe ffa1 	bl	8000200 <mov_avg>
  80012be:	ee07 0a90 	vmov	s15, r0
  80012c2:	eef8 7ae7 	vcvt.f32.s32	s15, s15
@@ -1697,11 +1697,11 @@ const int N=4;
  80012de:	4619      	mov	r1, r3
  80012e0:	f7ff fc8a 	bl	8000bf8 <__aeabi_d2f>
  80012e4:	4603      	mov	r3, r0
- 80012e6:	f8c7 3118 	str.w	r3, [r7, #280]	@ 0x118
+ 80012e6:	f8c7 3128 	str.w	r3, [r7, #296]	@ 0x128
 		accel_filt_asm[1]= (float)mov_avg(N,accel_buff_y) * (9.8/1000.0f);
- 80012ea:	f507 73b4 	add.w	r3, r7, #360	@ 0x168
+ 80012ea:	f507 73bc 	add.w	r3, r7, #376	@ 0x178
  80012ee:	4619      	mov	r1, r3
- 80012f0:	f8d7 01d4 	ldr.w	r0, [r7, #468]	@ 0x1d4
+ 80012f0:	f8d7 01e4 	ldr.w	r0, [r7, #484]	@ 0x1e4
  80012f4:	f7fe ff84 	bl	8000200 <mov_avg>
  80012f8:	ee07 0a90 	vmov	s15, r0
  80012fc:	eef8 7ae7 	vcvt.f32.s32	s15, s15
@@ -1716,11 +1716,11 @@ const int N=4;
  8001318:	4619      	mov	r1, r3
  800131a:	f7ff fc6d 	bl	8000bf8 <__aeabi_d2f>
  800131e:	4603      	mov	r3, r0
- 8001320:	f8c7 311c 	str.w	r3, [r7, #284]	@ 0x11c
+ 8001320:	f8c7 312c 	str.w	r3, [r7, #300]	@ 0x12c
 		accel_filt_asm[2]= (float)mov_avg(N,accel_buff_z) * (9.8/1000.0f);
- 8001324:	f507 73ac 	add.w	r3, r7, #344	@ 0x158
+ 8001324:	f507 73b4 	add.w	r3, r7, #360	@ 0x168
  8001328:	4619      	mov	r1, r3
- 800132a:	f8d7 01d4 	ldr.w	r0, [r7, #468]	@ 0x1d4
+ 800132a:	f8d7 01e4 	ldr.w	r0, [r7, #484]	@ 0x1e4
  800132e:	f7fe ff67 	bl	8000200 <mov_avg>
  8001332:	ee07 0a90 	vmov	s15, r0
  8001336:	eef8 7ae7 	vcvt.f32.s32	s15, s15
@@ -1735,12 +1735,12 @@ const int N=4;
  8001352:	4619      	mov	r1, r3
  8001354:	f7ff fc50 	bl	8000bf8 <__aeabi_d2f>
  8001358:	4603      	mov	r3, r0
- 800135a:	f8c7 3120 	str.w	r3, [r7, #288]	@ 0x120
+ 800135a:	f8c7 3130 	str.w	r3, [r7, #304]	@ 0x130
 
 
 		//Preprocessing the filtered outputs  The same needs to be done for the output from the assembly program as well
 		float accel_filt_c[3]={0};
- 800135e:	f507 7386 	add.w	r3, r7, #268	@ 0x10c
+ 800135e:	f507 738e 	add.w	r3, r7, #284	@ 0x11c
  8001362:	2200      	movs	r2, #0
  8001364:	e01c      	b.n	80013a0 <main+0x3d8>
  8001366:	bf00      	nop
@@ -1748,7 +1748,7 @@ const int N=4;
  800136c:	40239999 	.word	0x40239999
  8001370:	bc01a36f 	.word	0xbc01a36f
  8001374:	3f841205 	.word	0x3f841205
- 8001378:	08008518 	.word	0x08008518
+ 8001378:	08008568 	.word	0x08008568
  800137c:	20000284 	.word	0x20000284
  8001380:	40d00000 	.word	0x40d00000
  8001384:	419c0000 	.word	0x419c0000
@@ -1763,9 +1763,9 @@ const int N=4;
  80013a4:	609a      	str	r2, [r3, #8]
 
 		accel_filt_c[0]=(float)mov_avg_C(N,accel_buff_x) * (9.8/1000.0f);
- 80013a6:	f507 73bc 	add.w	r3, r7, #376	@ 0x178
+ 80013a6:	f507 73c4 	add.w	r3, r7, #392	@ 0x188
  80013aa:	4619      	mov	r1, r3
- 80013ac:	f8d7 01d4 	ldr.w	r0, [r7, #468]	@ 0x1d4
+ 80013ac:	f8d7 01e4 	ldr.w	r0, [r7, #484]	@ 0x1e4
  80013b0:	f000 fb80 	bl	8001ab4 <mov_avg_C>
  80013b4:	ee07 0a90 	vmov	s15, r0
  80013b8:	eef8 7ae7 	vcvt.f32.s32	s15, s15
@@ -1780,11 +1780,11 @@ const int N=4;
  80013d4:	4619      	mov	r1, r3
  80013d6:	f7ff fc0f 	bl	8000bf8 <__aeabi_d2f>
  80013da:	4603      	mov	r3, r0
- 80013dc:	f8c7 310c 	str.w	r3, [r7, #268]	@ 0x10c
+ 80013dc:	f8c7 311c 	str.w	r3, [r7, #284]	@ 0x11c
 		accel_filt_c[1]=(float)mov_avg_C(N,accel_buff_y) * (9.8/1000.0f);
- 80013e0:	f507 73b4 	add.w	r3, r7, #360	@ 0x168
+ 80013e0:	f507 73bc 	add.w	r3, r7, #376	@ 0x178
  80013e4:	4619      	mov	r1, r3
- 80013e6:	f8d7 01d4 	ldr.w	r0, [r7, #468]	@ 0x1d4
+ 80013e6:	f8d7 01e4 	ldr.w	r0, [r7, #484]	@ 0x1e4
  80013ea:	f000 fb63 	bl	8001ab4 <mov_avg_C>
  80013ee:	ee07 0a90 	vmov	s15, r0
  80013f2:	eef8 7ae7 	vcvt.f32.s32	s15, s15
@@ -1799,11 +1799,11 @@ const int N=4;
  800140e:	4619      	mov	r1, r3
  8001410:	f7ff fbf2 	bl	8000bf8 <__aeabi_d2f>
  8001414:	4603      	mov	r3, r0
- 8001416:	f8c7 3110 	str.w	r3, [r7, #272]	@ 0x110
+ 8001416:	f8c7 3120 	str.w	r3, [r7, #288]	@ 0x120
 		accel_filt_c[2]=(float)mov_avg_C(N,accel_buff_z) * (9.8/1000.0f);
- 800141a:	f507 73ac 	add.w	r3, r7, #344	@ 0x158
+ 800141a:	f507 73b4 	add.w	r3, r7, #360	@ 0x168
  800141e:	4619      	mov	r1, r3
- 8001420:	f8d7 01d4 	ldr.w	r0, [r7, #468]	@ 0x1d4
+ 8001420:	f8d7 01e4 	ldr.w	r0, [r7, #484]	@ 0x1e4
  8001424:	f000 fb46 	bl	8001ab4 <mov_avg_C>
  8001428:	ee07 0a90 	vmov	s15, r0
  800142c:	eef8 7ae7 	vcvt.f32.s32	s15, s15
@@ -1818,23 +1818,23 @@ const int N=4;
  8001448:	4619      	mov	r1, r3
  800144a:	f7ff fbd5 	bl	8000bf8 <__aeabi_d2f>
  800144e:	4603      	mov	r3, r0
- 8001450:	f8c7 3114 	str.w	r3, [r7, #276]	@ 0x114
+ 8001450:	f8c7 3124 	str.w	r3, [r7, #292]	@ 0x124
 
 		// ********* Fall detection *********/
 		// write your program from here:
 
 		// calculate the magnitude of the acceleration (sqrt(ax^2 + ay^2 + az^2))
 		float accelerationMagnitude = sqrt((accel_filt_asm[0] * accel_filt_asm[0]) + (accel_filt_asm[1] * accel_filt_asm[1])
- 8001454:	ed97 7a46 	vldr	s14, [r7, #280]	@ 0x118
- 8001458:	edd7 7a46 	vldr	s15, [r7, #280]	@ 0x118
+ 8001454:	ed97 7a4a 	vldr	s14, [r7, #296]	@ 0x128
+ 8001458:	edd7 7a4a 	vldr	s15, [r7, #296]	@ 0x128
  800145c:	ee27 7a27 	vmul.f32	s14, s14, s15
- 8001460:	edd7 6a47 	vldr	s13, [r7, #284]	@ 0x11c
- 8001464:	edd7 7a47 	vldr	s15, [r7, #284]	@ 0x11c
+ 8001460:	edd7 6a4b 	vldr	s13, [r7, #300]	@ 0x12c
+ 8001464:	edd7 7a4b 	vldr	s15, [r7, #300]	@ 0x12c
  8001468:	ee66 7aa7 	vmul.f32	s15, s13, s15
  800146c:	ee37 7a27 	vadd.f32	s14, s14, s15
 				+ accel_filt_asm[2] * accel_filt_asm[2]);
- 8001470:	edd7 6a48 	vldr	s13, [r7, #288]	@ 0x120
- 8001474:	edd7 7a48 	vldr	s15, [r7, #288]	@ 0x120
+ 8001470:	edd7 6a4c 	vldr	s13, [r7, #304]	@ 0x130
+ 8001474:	edd7 7a4c 	vldr	s15, [r7, #304]	@ 0x130
  8001478:	ee66 7aa7 	vmul.f32	s15, s13, s15
  800147c:	ee77 7a27 	vadd.f32	s15, s14, s15
 		float accelerationMagnitude = sqrt((accel_filt_asm[0] * accel_filt_asm[0]) + (accel_filt_asm[1] * accel_filt_asm[1])
@@ -1849,20 +1849,20 @@ const int N=4;
  800149a:	4619      	mov	r1, r3
  800149c:	f7ff fbac 	bl	8000bf8 <__aeabi_d2f>
  80014a0:	4603      	mov	r3, r0
- 80014a2:	f8c7 31a4 	str.w	r3, [r7, #420]	@ 0x1a4
+ 80014a2:	f8c7 31b4 	str.w	r3, [r7, #436]	@ 0x1b4
 
 		// calculate the magnitude of the gyro readings
 		float gyroMagnitude = sqrt((gyro_velocity[0] * gyro_velocity[0]) + (gyro_velocity[1] * gyro_velocity[1])
- 80014a6:	ed97 7a49 	vldr	s14, [r7, #292]	@ 0x124
- 80014aa:	edd7 7a49 	vldr	s15, [r7, #292]	@ 0x124
+ 80014a6:	ed97 7a4d 	vldr	s14, [r7, #308]	@ 0x134
+ 80014aa:	edd7 7a4d 	vldr	s15, [r7, #308]	@ 0x134
  80014ae:	ee27 7a27 	vmul.f32	s14, s14, s15
- 80014b2:	edd7 6a4a 	vldr	s13, [r7, #296]	@ 0x128
- 80014b6:	edd7 7a4a 	vldr	s15, [r7, #296]	@ 0x128
+ 80014b2:	edd7 6a4e 	vldr	s13, [r7, #312]	@ 0x138
+ 80014b6:	edd7 7a4e 	vldr	s15, [r7, #312]	@ 0x138
  80014ba:	ee66 7aa7 	vmul.f32	s15, s13, s15
  80014be:	ee37 7a27 	vadd.f32	s14, s14, s15
 				+ gyro_velocity[2] * gyro_velocity[2]);
- 80014c2:	edd7 6a4b 	vldr	s13, [r7, #300]	@ 0x12c
- 80014c6:	edd7 7a4b 	vldr	s15, [r7, #300]	@ 0x12c
+ 80014c2:	edd7 6a4f 	vldr	s13, [r7, #316]	@ 0x13c
+ 80014c6:	edd7 7a4f 	vldr	s15, [r7, #316]	@ 0x13c
  80014ca:	ee66 7aa7 	vmul.f32	s15, s13, s15
  80014ce:	ee77 7a27 	vadd.f32	s15, s14, s15
 		float gyroMagnitude = sqrt((gyro_velocity[0] * gyro_velocity[0]) + (gyro_velocity[1] * gyro_velocity[1])
@@ -1877,7 +1877,7 @@ const int N=4;
  80014ec:	4619      	mov	r1, r3
  80014ee:	f7ff fb83 	bl	8000bf8 <__aeabi_d2f>
  80014f2:	4603      	mov	r3, r0
- 80014f4:	f8c7 31a0 	str.w	r3, [r7, #416]	@ 0x1a0
+ 80014f4:	f8c7 31b0 	str.w	r3, [r7, #432]	@ 0x1b0
 		// 0 NORMAL -> 1 FREEFALL when accel drops
 		// 1 FREEFALL -> 2 IMPACT_WAIT_STILL when impact spike occurs
 		// 2 IMPACT_WAIT_STILL -> 3 FALL_ALERT when (stillness OR barometer confirm) within window
@@ -1891,14 +1891,14 @@ const int N=4;
 		{
 			pressure_confirmed = false;
  8001500:	2300      	movs	r3, #0
- 8001502:	f887 31db 	strb.w	r3, [r7, #475]	@ 0x1db
+ 8001502:	f887 31eb 	strb.w	r3, [r7, #491]	@ 0x1eb
 			delay_ms = 1000; // slow blinking to indicate normal activity
  8001506:	f44f 737a 	mov.w	r3, #1000	@ 0x3e8
- 800150a:	f8c7 31e0 	str.w	r3, [r7, #480]	@ 0x1e0
+ 800150a:	f8c7 31f0 	str.w	r3, [r7, #496]	@ 0x1f0
 
 			if (accelerationMagnitude < free_fall_threshold)
- 800150e:	ed97 7a69 	vldr	s14, [r7, #420]	@ 0x1a4
- 8001512:	edd7 7a72 	vldr	s15, [r7, #456]	@ 0x1c8
+ 800150e:	ed97 7a6d 	vldr	s14, [r7, #436]	@ 0x1b4
+ 8001512:	edd7 7a76 	vldr	s15, [r7, #472]	@ 0x1d8
  8001516:	eeb4 7ae7 	vcmpe.f32	s14, s15
  800151a:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
  800151e:	f140 8174 	bpl.w	800180a <main+0x842>
@@ -1909,12 +1909,12 @@ const int N=4;
  8001526:	601a      	str	r2, [r3, #0]
 				freefall_start_tick = now;
  8001528:	4a92      	ldr	r2, [pc, #584]	@ (8001774 <main+0x7ac>)
- 800152a:	f8d7 31ac 	ldr.w	r3, [r7, #428]	@ 0x1ac
+ 800152a:	f8d7 31bc 	ldr.w	r3, [r7, #444]	@ 0x1bc
  800152e:	6013      	str	r3, [r2, #0]
 				pressure_baseline = smoothed_pressure; // capture baseline at free-fall start
  8001530:	4b91      	ldr	r3, [pc, #580]	@ (8001778 <main+0x7b0>)
  8001532:	681b      	ldr	r3, [r3, #0]
- 8001534:	f8c7 31dc 	str.w	r3, [r7, #476]	@ 0x1dc
+ 8001534:	f8c7 31ec 	str.w	r3, [r7, #492]	@ 0x1ec
  8001538:	e167      	b.n	800180a <main+0x842>
 			}
 		}
@@ -1928,9 +1928,9 @@ const int N=4;
 			if ((now - freefall_start_tick) > freefall_timeout_ms)
  8001542:	4b8c      	ldr	r3, [pc, #560]	@ (8001774 <main+0x7ac>)
  8001544:	681b      	ldr	r3, [r3, #0]
- 8001546:	f8d7 21ac 	ldr.w	r2, [r7, #428]	@ 0x1ac
+ 8001546:	f8d7 21bc 	ldr.w	r2, [r7, #444]	@ 0x1bc
  800154a:	1ad3      	subs	r3, r2, r3
- 800154c:	f8d7 21b8 	ldr.w	r2, [r7, #440]	@ 0x1b8
+ 800154c:	f8d7 21c8 	ldr.w	r2, [r7, #456]	@ 0x1c8
  8001550:	429a      	cmp	r2, r3
  8001552:	d203      	bcs.n	800155c <main+0x594>
 			{
@@ -1946,20 +1946,20 @@ const int N=4;
 				if ((smoothed_pressure - pressure_baseline) > pressure_rise_threshold){
  800155c:	4b86      	ldr	r3, [pc, #536]	@ (8001778 <main+0x7b0>)
  800155e:	ed93 7a00 	vldr	s14, [r3]
- 8001562:	edd7 7a77 	vldr	s15, [r7, #476]	@ 0x1dc
+ 8001562:	edd7 7a7b 	vldr	s15, [r7, #492]	@ 0x1ec
  8001566:	ee77 7a67 	vsub.f32	s15, s14, s15
- 800156a:	ed97 7a6f 	vldr	s14, [r7, #444]	@ 0x1bc
+ 800156a:	ed97 7a73 	vldr	s14, [r7, #460]	@ 0x1cc
  800156e:	eeb4 7ae7 	vcmpe.f32	s14, s15
  8001572:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
  8001576:	d502      	bpl.n	800157e <main+0x5b6>
 					pressure_confirmed = true;
  8001578:	2301      	movs	r3, #1
- 800157a:	f887 31db 	strb.w	r3, [r7, #475]	@ 0x1db
+ 800157a:	f887 31eb 	strb.w	r3, [r7, #491]	@ 0x1eb
 				}
 
 				if (accelerationMagnitude > impact_threshold){
- 800157e:	ed97 7a69 	vldr	s14, [r7, #420]	@ 0x1a4
- 8001582:	edd7 7a71 	vldr	s15, [r7, #452]	@ 0x1c4
+ 800157e:	ed97 7a6d 	vldr	s14, [r7, #436]	@ 0x1b4
+ 8001582:	edd7 7a75 	vldr	s15, [r7, #468]	@ 0x1d4
  8001586:	eeb4 7ae7 	vcmpe.f32	s14, s15
  800158a:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
  800158e:	f340 813c 	ble.w	800180a <main+0x842>
@@ -1969,7 +1969,7 @@ const int N=4;
  8001596:	601a      	str	r2, [r3, #0]
 					impact_tick = now;
  8001598:	4a78      	ldr	r2, [pc, #480]	@ (800177c <main+0x7b4>)
- 800159a:	f8d7 31ac 	ldr.w	r3, [r7, #428]	@ 0x1ac
+ 800159a:	f8d7 31bc 	ldr.w	r3, [r7, #444]	@ 0x1bc
  800159e:	6013      	str	r3, [r2, #0]
  80015a0:	e133      	b.n	800180a <main+0x842>
 				}
@@ -1982,41 +1982,41 @@ const int N=4;
  80015a8:	f040 80ab 	bne.w	8001702 <main+0x73a>
 			// check the barometer again
 			if ((current_pressure - pressure_baseline) > pressure_rise_threshold){
- 80015ac:	ed97 7a73 	vldr	s14, [r7, #460]	@ 0x1cc
- 80015b0:	edd7 7a77 	vldr	s15, [r7, #476]	@ 0x1dc
+ 80015ac:	ed97 7a77 	vldr	s14, [r7, #476]	@ 0x1dc
+ 80015b0:	edd7 7a7b 	vldr	s15, [r7, #492]	@ 0x1ec
  80015b4:	ee77 7a67 	vsub.f32	s15, s14, s15
- 80015b8:	ed97 7a6f 	vldr	s14, [r7, #444]	@ 0x1bc
+ 80015b8:	ed97 7a73 	vldr	s14, [r7, #460]	@ 0x1cc
  80015bc:	eeb4 7ae7 	vcmpe.f32	s14, s15
  80015c0:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
  80015c4:	d502      	bpl.n	80015cc <main+0x604>
 				pressure_confirmed = true;
  80015c6:	2301      	movs	r3, #1
- 80015c8:	f887 31db 	strb.w	r3, [r7, #475]	@ 0x1db
+ 80015c8:	f887 31eb 	strb.w	r3, [r7, #491]	@ 0x1eb
 			}
 
 			//
 			if ((now - impact_tick) <= stillness_window_ms){
  80015cc:	4b6b      	ldr	r3, [pc, #428]	@ (800177c <main+0x7b4>)
  80015ce:	681b      	ldr	r3, [r3, #0]
- 80015d0:	f8d7 21ac 	ldr.w	r2, [r7, #428]	@ 0x1ac
+ 80015d0:	f8d7 21bc 	ldr.w	r2, [r7, #444]	@ 0x1bc
  80015d4:	1ad3      	subs	r3, r2, r3
- 80015d6:	f8d7 21b4 	ldr.w	r2, [r7, #436]	@ 0x1b4
+ 80015d6:	f8d7 21c4 	ldr.w	r2, [r7, #452]	@ 0x1c4
  80015da:	429a      	cmp	r2, r3
  80015dc:	f0c0 808d 	bcc.w	80016fa <main+0x732>
 				if (now-impact_tick > 500){
  80015e0:	4b66      	ldr	r3, [pc, #408]	@ (800177c <main+0x7b4>)
  80015e2:	681b      	ldr	r3, [r3, #0]
- 80015e4:	f8d7 21ac 	ldr.w	r2, [r7, #428]	@ 0x1ac
+ 80015e4:	f8d7 21bc 	ldr.w	r2, [r7, #444]	@ 0x1bc
  80015e8:	1ad3      	subs	r3, r2, r3
  80015ea:	f5b3 7ffa 	cmp.w	r3, #500	@ 0x1f4
  80015ee:	f240 810c 	bls.w	800180a <main+0x842>
-					if (gyroMagnitude < still_gyro_threshold && pressure_confirmed /*&& is_lying_down*/){
- 80015f2:	ed97 7a68 	vldr	s14, [r7, #416]	@ 0x1a0
- 80015f6:	edd7 7a70 	vldr	s15, [r7, #448]	@ 0x1c0
+					if (gyroMagnitude < still_gyro_threshold && pressure_confirmed){
+ 80015f2:	ed97 7a6c 	vldr	s14, [r7, #432]	@ 0x1b0
+ 80015f6:	edd7 7a74 	vldr	s15, [r7, #464]	@ 0x1d0
  80015fa:	eeb4 7ae7 	vcmpe.f32	s14, s15
  80015fe:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
  8001602:	f140 8102 	bpl.w	800180a <main+0x842>
- 8001606:	f897 31db 	ldrb.w	r3, [r7, #475]	@ 0x1db
+ 8001606:	f897 31eb 	ldrb.w	r3, [r7, #491]	@ 0x1eb
  800160a:	2b00      	cmp	r3, #0
  800160c:	f000 80fd 	beq.w	800180a <main+0x842>
 					fall_state = 3;
@@ -2025,19 +2025,19 @@ const int N=4;
  8001614:	601a      	str	r2, [r3, #0]
 					fall_alert_start_tick = now;
  8001616:	4a5a      	ldr	r2, [pc, #360]	@ (8001780 <main+0x7b8>)
- 8001618:	f8d7 31ac 	ldr.w	r3, [r7, #428]	@ 0x1ac
+ 8001618:	f8d7 31bc 	ldr.w	r3, [r7, #444]	@ 0x1bc
  800161c:	6013      	str	r3, [r2, #0]
 					delay_ms = 100; // fast blinking to indicate fall
  800161e:	2364      	movs	r3, #100	@ 0x64
- 8001620:	f8c7 31e0 	str.w	r3, [r7, #480]	@ 0x1e0
+ 8001620:	f8c7 31f0 	str.w	r3, [r7, #496]	@ 0x1f0
 
 					// Create the string to indicate the time stamp
-					char time_str[64];
+					char time_str[128];
 					// 1. Define the time you usually turn on/reset the board
-					// (14 hours * 3600) + (30 minutes * 60) + 0 seconds
-					uint32_t boot_time_sgt_seconds = (8 * 3600) + (33 * 60) + 0;
- 8001624:	f647 033c 	movw	r3, #30780	@ 0x783c
- 8001628:	f8c7 319c 	str.w	r3, [r7, #412]	@ 0x19c
+					// 2:40 PM Presentation time (We need to hard-code the time as there is no clock running in the background when the board is asleep)
+					uint32_t boot_time_sgt_seconds = (14 * 3600) + (40 * 60) + 0;
+ 8001624:	f64c 6340 	movw	r3, #52800	@ 0xce40
+ 8001628:	f8c7 31ac 	str.w	r3, [r7, #428]	@ 0x1ac
 
 					// 2. Calculate elapsed seconds since boot
 					uint32_t total_elapsed_seconds = fall_alert_start_tick / 1000;
@@ -2046,18 +2046,18 @@ const int N=4;
  8001630:	4a54      	ldr	r2, [pc, #336]	@ (8001784 <main+0x7bc>)
  8001632:	fba2 2303 	umull	r2, r3, r2, r3
  8001636:	099b      	lsrs	r3, r3, #6
- 8001638:	f8c7 3198 	str.w	r3, [r7, #408]	@ 0x198
+ 8001638:	f8c7 31a8 	str.w	r3, [r7, #424]	@ 0x1a8
 
 					// 3. Add elapsed time to your boot time
 					uint32_t current_time_seconds = boot_time_sgt_seconds + total_elapsed_seconds;
- 800163c:	f8d7 219c 	ldr.w	r2, [r7, #412]	@ 0x19c
- 8001640:	f8d7 3198 	ldr.w	r3, [r7, #408]	@ 0x198
+ 800163c:	f8d7 21ac 	ldr.w	r2, [r7, #428]	@ 0x1ac
+ 8001640:	f8d7 31a8 	ldr.w	r3, [r7, #424]	@ 0x1a8
  8001644:	4413      	add	r3, r2
- 8001646:	f8c7 3194 	str.w	r3, [r7, #404]	@ 0x194
+ 8001646:	f8c7 31a4 	str.w	r3, [r7, #420]	@ 0x1a4
 
 					// 4. Convert back to Hours, Minutes, and Seconds
 					uint32_t hours = (current_time_seconds / 3600) % 24;
- 800164a:	f8d7 3194 	ldr.w	r3, [r7, #404]	@ 0x194
+ 800164a:	f8d7 31a4 	ldr.w	r3, [r7, #420]	@ 0x1a4
  800164e:	4a4e      	ldr	r2, [pc, #312]	@ (8001788 <main+0x7c0>)
  8001650:	fba2 2303 	umull	r2, r3, r2, r3
  8001654:	0ada      	lsrs	r2, r3, #11
@@ -2069,9 +2069,9 @@ const int N=4;
  8001662:	440b      	add	r3, r1
  8001664:	00db      	lsls	r3, r3, #3
  8001666:	1ad3      	subs	r3, r2, r3
- 8001668:	f8c7 3190 	str.w	r3, [r7, #400]	@ 0x190
+ 8001668:	f8c7 31a0 	str.w	r3, [r7, #416]	@ 0x1a0
 					uint32_t minutes = (current_time_seconds / 60) % 60;
- 800166c:	f8d7 3194 	ldr.w	r3, [r7, #404]	@ 0x194
+ 800166c:	f8d7 31a4 	ldr.w	r3, [r7, #420]	@ 0x1a4
  8001670:	4a47      	ldr	r2, [pc, #284]	@ (8001790 <main+0x7c8>)
  8001672:	fba2 2303 	umull	r2, r3, r2, r3
  8001676:	095a      	lsrs	r2, r3, #5
@@ -2083,9 +2083,9 @@ const int N=4;
  8001684:	1a5b      	subs	r3, r3, r1
  8001686:	009b      	lsls	r3, r3, #2
  8001688:	1ad3      	subs	r3, r2, r3
- 800168a:	f8c7 318c 	str.w	r3, [r7, #396]	@ 0x18c
+ 800168a:	f8c7 319c 	str.w	r3, [r7, #412]	@ 0x19c
 					uint32_t seconds = current_time_seconds % 60;
- 800168e:	f8d7 2194 	ldr.w	r2, [r7, #404]	@ 0x194
+ 800168e:	f8d7 21a4 	ldr.w	r2, [r7, #420]	@ 0x1a4
  8001692:	4b3f      	ldr	r3, [pc, #252]	@ (8001790 <main+0x7c8>)
  8001694:	fba3 1302 	umull	r1, r3, r3, r2
  8001698:	0959      	lsrs	r1, r3, #5
@@ -2094,39 +2094,44 @@ const int N=4;
  800169e:	1a5b      	subs	r3, r3, r1
  80016a0:	009b      	lsls	r3, r3, #2
  80016a2:	1ad3      	subs	r3, r2, r3
- 80016a4:	f8c7 3188 	str.w	r3, [r7, #392]	@ 0x188
+ 80016a4:	f8c7 3198 	str.w	r3, [r7, #408]	@ 0x198
 
 					// Write to NFC and UART
-					sprintf(time_str, "ALERT: Fall Detected at %02lu:%02lu:%02lu SGT", hours, minutes, seconds);
- 80016a8:	1d38      	adds	r0, r7, #4
- 80016aa:	f8d7 3188 	ldr.w	r3, [r7, #392]	@ 0x188
- 80016ae:	9300      	str	r3, [sp, #0]
- 80016b0:	f8d7 318c 	ldr.w	r3, [r7, #396]	@ 0x18c
- 80016b4:	f8d7 2190 	ldr.w	r2, [r7, #400]	@ 0x190
- 80016b8:	4936      	ldr	r1, [pc, #216]	@ (8001794 <main+0x7cc>)
- 80016ba:	f004 fbe1 	bl	8005e80 <siprintf>
+					sprintf(time_str, "PATIENT: Ethan Lam \n"
+ 80016a8:	f107 0054 	add.w	r0, r7, #84	@ 0x54
+ 80016ac:	f8d7 3198 	ldr.w	r3, [r7, #408]	@ 0x198
+ 80016b0:	9300      	str	r3, [sp, #0]
+ 80016b2:	f8d7 319c 	ldr.w	r3, [r7, #412]	@ 0x19c
+ 80016b6:	f8d7 21a0 	ldr.w	r2, [r7, #416]	@ 0x1a0
+ 80016ba:	4936      	ldr	r1, [pc, #216]	@ (8001794 <main+0x7cc>)
+ 80016bc:	f004 fbe0 	bl	8005e80 <siprintf>
+			                "TIME: %02lu:%02lu:%02lu SGT\n"
+			                "VITAL: Stillness Detected\n"
+							"BLOOD TYPE: O+\n"
+							"AGE: 67 years"
+							, hours, minutes, seconds);
 					NFC_Format_And_Write(time_str);
- 80016be:	1d3b      	adds	r3, r7, #4
- 80016c0:	4618      	mov	r0, r3
- 80016c2:	f000 f8ed 	bl	80018a0 <NFC_Format_And_Write>
+ 80016c0:	f107 0354 	add.w	r3, r7, #84	@ 0x54
+ 80016c4:	4618      	mov	r0, r3
+ 80016c6:	f000 f8eb 	bl	80018a0 <NFC_Format_And_Write>
 
 
 					char gyro_alert[] = "\r\n*** FALL DETECTED! ***\r\n--- Waiting 15 seconds for User OK Button... ---\r\n\n";
- 80016c6:	f507 73f8 	add.w	r3, r7, #496	@ 0x1f0
- 80016ca:	f5a3 73d6 	sub.w	r3, r3, #428	@ 0x1ac
- 80016ce:	4a32      	ldr	r2, [pc, #200]	@ (8001798 <main+0x7d0>)
- 80016d0:	4618      	mov	r0, r3
- 80016d2:	4611      	mov	r1, r2
- 80016d4:	234e      	movs	r3, #78	@ 0x4e
- 80016d6:	461a      	mov	r2, r3
- 80016d8:	f004 fcf0 	bl	80060bc <memcpy>
+ 80016ca:	f507 7300 	add.w	r3, r7, #512	@ 0x200
+ 80016ce:	f5a3 73fe 	sub.w	r3, r3, #508	@ 0x1fc
+ 80016d2:	4a31      	ldr	r2, [pc, #196]	@ (8001798 <main+0x7d0>)
+ 80016d4:	4618      	mov	r0, r3
+ 80016d6:	4611      	mov	r1, r2
+ 80016d8:	234e      	movs	r3, #78	@ 0x4e
+ 80016da:	461a      	mov	r2, r3
+ 80016dc:	f004 fcee 	bl	80060bc <memcpy>
 					HAL_UART_Transmit(&huart1, (uint8_t*)gyro_alert, strlen(gyro_alert), HAL_MAX_DELAY);
- 80016dc:	f107 0344 	add.w	r3, r7, #68	@ 0x44
- 80016e0:	4618      	mov	r0, r3
- 80016e2:	f7fe fded 	bl	80002c0 <strlen>
- 80016e6:	4603      	mov	r3, r0
- 80016e8:	b29a      	uxth	r2, r3
- 80016ea:	f107 0144 	add.w	r1, r7, #68	@ 0x44
+ 80016e0:	1d3b      	adds	r3, r7, #4
+ 80016e2:	4618      	mov	r0, r3
+ 80016e4:	f7fe fdec 	bl	80002c0 <strlen>
+ 80016e8:	4603      	mov	r3, r0
+ 80016ea:	b29a      	uxth	r2, r3
+ 80016ec:	1d39      	adds	r1, r7, #4
  80016ee:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
  80016f2:	482a      	ldr	r0, [pc, #168]	@ (800179c <main+0x7d4>)
  80016f4:	f003 f9cc 	bl	8004a90 <HAL_UART_Transmit>
@@ -2150,7 +2155,7 @@ const int N=4;
  8001708:	d17f      	bne.n	800180a <main+0x842>
 			delay_ms = 100; // fast blinking to indicate fall
  800170a:	2364      	movs	r3, #100	@ 0x64
- 800170c:	f8c7 31e0 	str.w	r3, [r7, #480]	@ 0x1e0
+ 800170c:	f8c7 31f0 	str.w	r3, [r7, #496]	@ 0x1f0
 
 			if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == GPIO_PIN_RESET){
  8001710:	f44f 5100 	mov.w	r1, #8192	@ 0x2000
@@ -2168,10 +2173,10 @@ const int N=4;
  8001728:	f000 f8ba 	bl	80018a0 <NFC_Format_And_Write>
 				delay_ms = 1000; // go back to blinking the LED slowly
  800172c:	f44f 737a 	mov.w	r3, #1000	@ 0x3e8
- 8001730:	f8c7 31e0 	str.w	r3, [r7, #480]	@ 0x1e0
+ 8001730:	f8c7 31f0 	str.w	r3, [r7, #496]	@ 0x1f0
 
 				char cancel_msg[] = "\r\n--- USER PRESSED 'I AM OK'. ALARM CANCELLED! HE IS ALRIGHT! ---\r\n\n";
- 8001734:	f507 73f8 	add.w	r3, r7, #496	@ 0x1f0
+ 8001734:	f507 7300 	add.w	r3, r7, #512	@ 0x200
  8001738:	f5a3 73d6 	sub.w	r3, r3, #428	@ 0x1ac
  800173c:	4a1a      	ldr	r2, [pc, #104]	@ (80017a8 <main+0x7e0>)
  800173e:	4618      	mov	r0, r3
@@ -2180,12 +2185,12 @@ const int N=4;
  8001744:	461a      	mov	r2, r3
  8001746:	f004 fcb9 	bl	80060bc <memcpy>
 				HAL_UART_Transmit(&huart1, (uint8_t*)cancel_msg, strlen(cancel_msg), HAL_MAX_DELAY);
- 800174a:	f107 0344 	add.w	r3, r7, #68	@ 0x44
+ 800174a:	f107 0354 	add.w	r3, r7, #84	@ 0x54
  800174e:	4618      	mov	r0, r3
  8001750:	f7fe fdb6 	bl	80002c0 <strlen>
  8001754:	4603      	mov	r3, r0
  8001756:	b29a      	uxth	r2, r3
- 8001758:	f107 0144 	add.w	r1, r7, #68	@ 0x44
+ 8001758:	f107 0154 	add.w	r1, r7, #84	@ 0x54
  800175c:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
  8001760:	480e      	ldr	r0, [pc, #56]	@ (800179c <main+0x7d4>)
  8001762:	f003 f995 	bl	8004a90 <HAL_UART_Transmit>
@@ -2203,24 +2208,24 @@ const int N=4;
  800178c:	aaaaaaab 	.word	0xaaaaaaab
  8001790:	88888889 	.word	0x88888889
  8001794:	08008490 	.word	0x08008490
- 8001798:	0800852c 	.word	0x0800852c
+ 8001798:	0800857c 	.word	0x0800857c
  800179c:	20000284 	.word	0x20000284
  80017a0:	48000800 	.word	0x48000800
- 80017a4:	080084c0 	.word	0x080084c0
- 80017a8:	0800857c 	.word	0x0800857c
+ 80017a4:	08008510 	.word	0x08008510
+ 80017a8:	080085cc 	.word	0x080085cc
  80017ac:	bc01a36f 	.word	0xbc01a36f
  80017b0:	3f841205 	.word	0x3f841205
 
 			} else if (now - fall_alert_start_tick > fall_alert_duration_ms){
  80017b4:	4b34      	ldr	r3, [pc, #208]	@ (8001888 <main+0x8c0>)
  80017b6:	681b      	ldr	r3, [r3, #0]
- 80017b8:	f8d7 21ac 	ldr.w	r2, [r7, #428]	@ 0x1ac
+ 80017b8:	f8d7 21bc 	ldr.w	r2, [r7, #444]	@ 0x1bc
  80017bc:	1ad3      	subs	r3, r2, r3
- 80017be:	f8d7 21b0 	ldr.w	r2, [r7, #432]	@ 0x1b0
+ 80017be:	f8d7 21c0 	ldr.w	r2, [r7, #448]	@ 0x1c0
  80017c2:	429a      	cmp	r2, r3
  80017c4:	d221      	bcs.n	800180a <main+0x842>
 				char emergency_msg[] = "\r\n!!! NO RESPONSE. INITIATING EMERGENCY PROTOCOL !!!\r\n\n";
- 80017c6:	f507 73f8 	add.w	r3, r7, #496	@ 0x1f0
+ 80017c6:	f507 7300 	add.w	r3, r7, #512	@ 0x200
  80017ca:	f5a3 73d6 	sub.w	r3, r3, #428	@ 0x1ac
  80017ce:	4a2f      	ldr	r2, [pc, #188]	@ (800188c <main+0x8c4>)
  80017d0:	461c      	mov	r4, r3
@@ -2234,12 +2239,12 @@ const int N=4;
  80017e0:	e895 0003 	ldmia.w	r5, {r0, r1}
  80017e4:	e884 0003 	stmia.w	r4, {r0, r1}
 				HAL_UART_Transmit(&huart1, (uint8_t*)emergency_msg, strlen(emergency_msg), HAL_MAX_DELAY);
- 80017e8:	f107 0344 	add.w	r3, r7, #68	@ 0x44
+ 80017e8:	f107 0354 	add.w	r3, r7, #84	@ 0x54
  80017ec:	4618      	mov	r0, r3
  80017ee:	f7fe fd67 	bl	80002c0 <strlen>
  80017f2:	4603      	mov	r3, r0
  80017f4:	b29a      	uxth	r2, r3
- 80017f6:	f107 0144 	add.w	r1, r7, #68	@ 0x44
+ 80017f6:	f107 0154 	add.w	r1, r7, #84	@ 0x54
  80017fa:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
  80017fe:	4824      	ldr	r0, [pc, #144]	@ (8001890 <main+0x8c8>)
  8001800:	f003 f946 	bl	8004a90 <HAL_UART_Transmit>
@@ -2253,16 +2258,16 @@ const int N=4;
 		char buffer[200]; // Create a buffer large enough to hold the text
 
 		if(i>=3)
- 800180a:	f8d7 31ec 	ldr.w	r3, [r7, #492]	@ 0x1ec
+ 800180a:	f8d7 31fc 	ldr.w	r3, [r7, #508]	@ 0x1fc
  800180e:	2b02      	cmp	r3, #2
  8001810:	dd32      	ble.n	8001878 <main+0x8b0>
 		{
 			sprintf(buffer,
- 8001812:	f8d7 01a4 	ldr.w	r0, [r7, #420]	@ 0x1a4
+ 8001812:	f8d7 01b4 	ldr.w	r0, [r7, #436]	@ 0x1b4
  8001816:	f7fe febf 	bl	8000598 <__aeabi_f2d>
  800181a:	4680      	mov	r8, r0
  800181c:	4689      	mov	r9, r1
- 800181e:	f8d7 01a0 	ldr.w	r0, [r7, #416]	@ 0x1a0
+ 800181e:	f8d7 01b0 	ldr.w	r0, [r7, #432]	@ 0x1b0
  8001822:	f7fe feb9 	bl	8000598 <__aeabi_f2d>
  8001826:	4604      	mov	r4, r0
  8001828:	460d      	mov	r5, r1
@@ -2274,9 +2279,9 @@ const int N=4;
  8001836:	460b      	mov	r3, r1
  8001838:	4916      	ldr	r1, [pc, #88]	@ (8001894 <main+0x8cc>)
  800183a:	6809      	ldr	r1, [r1, #0]
- 800183c:	f897 01db 	ldrb.w	r0, [r7, #475]	@ 0x1db
+ 800183c:	f897 01eb 	ldrb.w	r0, [r7, #491]	@ 0x1eb
  8001840:	4606      	mov	r6, r0
- 8001842:	f107 0044 	add.w	r0, r7, #68	@ 0x44
+ 8001842:	f107 0054 	add.w	r0, r7, #84	@ 0x54
  8001846:	9605      	str	r6, [sp, #20]
  8001848:	9104      	str	r1, [sp, #16]
  800184a:	e9cd 2302 	strd	r2, r3, [sp, #8]
@@ -2288,32 +2293,32 @@ const int N=4;
 					"AccelMag:%f GyroMag:%f Pressure:%f State:%d pressureDetected:%d\r\n",
 					accelerationMagnitude, gyroMagnitude, smoothed_pressure, fall_state, pressure_confirmed ? 1 : 0);
 			HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
- 800185c:	f107 0344 	add.w	r3, r7, #68	@ 0x44
+ 800185c:	f107 0354 	add.w	r3, r7, #84	@ 0x54
  8001860:	4618      	mov	r0, r3
  8001862:	f7fe fd2d 	bl	80002c0 <strlen>
  8001866:	4603      	mov	r3, r0
  8001868:	b29a      	uxth	r2, r3
- 800186a:	f107 0144 	add.w	r1, r7, #68	@ 0x44
+ 800186a:	f107 0154 	add.w	r1, r7, #84	@ 0x54
  800186e:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
  8001872:	4807      	ldr	r0, [pc, #28]	@ (8001890 <main+0x8c8>)
  8001874:	f003 f90c 	bl	8004a90 <HAL_UART_Transmit>
 		}
 
 		i++;
- 8001878:	f8d7 31ec 	ldr.w	r3, [r7, #492]	@ 0x1ec
+ 8001878:	f8d7 31fc 	ldr.w	r3, [r7, #508]	@ 0x1fc
  800187c:	3301      	adds	r3, #1
- 800187e:	f8c7 31ec 	str.w	r3, [r7, #492]	@ 0x1ec
+ 800187e:	f8c7 31fc 	str.w	r3, [r7, #508]	@ 0x1fc
  8001882:	e423      	b.n	80010cc <main+0x104>
 			continue;
  8001884:	bf00      	nop
 	{
  8001886:	e421      	b.n	80010cc <main+0x104>
  8001888:	20000328 	.word	0x20000328
- 800188c:	080085c4 	.word	0x080085c4
+ 800188c:	08008614 	.word	0x08008614
  8001890:	20000284 	.word	0x20000284
  8001894:	2000031c 	.word	0x2000031c
  8001898:	20000318 	.word	0x20000318
- 800189c:	080084d4 	.word	0x080084d4
+ 800189c:	08008524 	.word	0x08008524
 
 080018a0 <NFC_Format_And_Write>:
 	}
@@ -2530,9 +2535,9 @@ void NFC_Format_And_Write(char* message) {
  8001aa0:	46bd      	mov	sp, r7
  8001aa2:	bd80      	pop	{r7, pc}
  8001aa4:	004040e1 	.word	0x004040e1
- 8001aa8:	080085fc 	.word	0x080085fc
+ 8001aa8:	0800864c 	.word	0x0800864c
  8001aac:	20000284 	.word	0x20000284
- 8001ab0:	08008610 	.word	0x08008610
+ 8001ab0:	08008660 	.word	0x08008660
 
 08001ab4 <mov_avg_C>:
 
@@ -3102,7 +3107,7 @@ int _kill(int pid, int sig) { return -1; }
  8001ea8:	200a0000 	.word	0x200a0000
  8001eac:	20000000 	.word	0x20000000
  8001eb0:	20000268 	.word	0x20000268
- 8001eb4:	08008a20 	.word	0x08008a20
+ 8001eb4:	08008a70 	.word	0x08008a70
  8001eb8:	20000268 	.word	0x20000268
  8001ebc:	2000050c 	.word	0x2000050c
 
@@ -8108,7 +8113,7 @@ int _kill(int pid, int sig) { return -1; }
  8004958:	4770      	bx	lr
  800495a:	bf00      	nop
  800495c:	40021000 	.word	0x40021000
- 8004960:	08008640 	.word	0x08008640
+ 8004960:	08008690 	.word	0x08008690
  8004964:	00f42400 	.word	0x00f42400
  8004968:	007a1200 	.word	0x007a1200
 
@@ -8140,7 +8145,7 @@ int _kill(int pid, int sig) { return -1; }
  80049a4:	4618      	mov	r0, r3
  80049a6:	bd80      	pop	{r7, pc}
  80049a8:	40021000 	.word	0x40021000
- 80049ac:	08008638 	.word	0x08008638
+ 80049ac:	08008688 	.word	0x08008688
 
 080049b0 <HAL_RCC_GetPCLK2Freq>:
  80049b0:	b580      	push	{r7, lr}
@@ -8158,7 +8163,7 @@ int _kill(int pid, int sig) { return -1; }
  80049d0:	4618      	mov	r0, r3
  80049d2:	bd80      	pop	{r7, pc}
  80049d4:	40021000 	.word	0x40021000
- 80049d8:	08008638 	.word	0x08008638
+ 80049d8:	08008688 	.word	0x08008688
 
 080049dc <HAL_UART_Init>:
  80049dc:	b580      	push	{r7, lr}
@@ -8943,7 +8948,7 @@ int _kill(int pid, int sig) { return -1; }
  8005166:	bf00      	nop
  8005168:	40008000 	.word	0x40008000
  800516c:	00f42400 	.word	0x00f42400
- 8005170:	08008670 	.word	0x08008670
+ 8005170:	080086c0 	.word	0x080086c0
  8005174:	2301      	movs	r3, #1
  8005176:	f887 302a 	strb.w	r3, [r7, #42]	@ 0x2a
  800517a:	697b      	ldr	r3, [r7, #20]
@@ -9859,11 +9864,11 @@ int _kill(int pid, int sig) { return -1; }
  80059d8:	e7ee      	b.n	80059b8 <_printf_float+0x2a4>
  80059da:	bf00      	nop
  80059dc:	7fefffff 	.word	0x7fefffff
- 80059e0:	0800868c 	.word	0x0800868c
- 80059e4:	08008688 	.word	0x08008688
- 80059e8:	08008694 	.word	0x08008694
- 80059ec:	08008690 	.word	0x08008690
- 80059f0:	08008698 	.word	0x08008698
+ 80059e0:	080086dc 	.word	0x080086dc
+ 80059e4:	080086d8 	.word	0x080086d8
+ 80059e8:	080086e4 	.word	0x080086e4
+ 80059ec:	080086e0 	.word	0x080086e0
+ 80059f0:	080086e8 	.word	0x080086e8
  80059f4:	6da3      	ldr	r3, [r4, #88]	@ 0x58
  80059f6:	f8dd a028 	ldr.w	sl, [sp, #40]	@ 0x28
  80059fa:	4553      	cmp	r3, sl
@@ -10341,8 +10346,8 @@ int _kill(int pid, int sig) { return -1; }
  8005e70:	2500      	movs	r5, #0
  8005e72:	f104 0619 	add.w	r6, r4, #25
  8005e76:	e7f5      	b.n	8005e64 <_printf_i+0x220>
- 8005e78:	0800869a 	.word	0x0800869a
- 8005e7c:	080086ab 	.word	0x080086ab
+ 8005e78:	080086ea 	.word	0x080086ea
+ 8005e7c:	080086fb 	.word	0x080086fb
 
 08005e80 <siprintf>:
  8005e80:	b40e      	push	{r1, r2, r3}
@@ -10579,10 +10584,10 @@ int _kill(int pid, int sig) { return -1; }
  8006096:	4798      	blx	r3
  8006098:	3601      	adds	r6, #1
  800609a:	e7f2      	b.n	8006082 <__libc_init_array+0x1e>
- 800609c:	08008a18 	.word	0x08008a18
- 80060a0:	08008a18 	.word	0x08008a18
- 80060a4:	08008a18 	.word	0x08008a18
- 80060a8:	08008a1c 	.word	0x08008a1c
+ 800609c:	08008a68 	.word	0x08008a68
+ 80060a0:	08008a68 	.word	0x08008a68
+ 80060a4:	08008a68 	.word	0x08008a68
+ 80060a8:	08008a6c 	.word	0x08008a6c
 
 080060ac <__retarget_lock_init_recursive>:
  80060ac:	4770      	bx	lr
@@ -10633,9 +10638,9 @@ int _kill(int pid, int sig) { return -1; }
  8006100:	e7f3      	b.n	80060ea <__assert_func+0x12>
  8006102:	bf00      	nop
  8006104:	200000ac 	.word	0x200000ac
- 8006108:	080086bc 	.word	0x080086bc
- 800610c:	080086c9 	.word	0x080086c9
- 8006110:	080086f7 	.word	0x080086f7
+ 8006108:	0800870c 	.word	0x0800870c
+ 800610c:	08008719 	.word	0x08008719
+ 8006110:	08008747 	.word	0x08008747
 
 08006114 <quorem>:
  8006114:	e92d 4ff7 	stmdb	sp!, {r0, r1, r2, r4, r5, r6, r7, r8, r9, sl, fp, lr}
@@ -11022,15 +11027,15 @@ int _kill(int pid, int sig) { return -1; }
  80064ec:	3fc68a28 	.word	0x3fc68a28
  80064f0:	509f79fb 	.word	0x509f79fb
  80064f4:	3fd34413 	.word	0x3fd34413
- 80064f8:	08008705 	.word	0x08008705
- 80064fc:	0800871c 	.word	0x0800871c
+ 80064f8:	08008755 	.word	0x08008755
+ 80064fc:	0800876c 	.word	0x0800876c
  8006500:	7ff00000 	.word	0x7ff00000
- 8006504:	08008699 	.word	0x08008699
+ 8006504:	080086e9 	.word	0x080086e9
  8006508:	3ff80000 	.word	0x3ff80000
- 800650c:	08008830 	.word	0x08008830
- 8006510:	08008774 	.word	0x08008774
- 8006514:	08008701 	.word	0x08008701
- 8006518:	08008698 	.word	0x08008698
+ 800650c:	08008880 	.word	0x08008880
+ 8006510:	080087c4 	.word	0x080087c4
+ 8006514:	08008751 	.word	0x08008751
+ 8006518:	080086e8 	.word	0x080086e8
  800651c:	f8d9 301c 	ldr.w	r3, [r9, #28]
  8006520:	6018      	str	r0, [r3, #0]
  8006522:	9b03      	ldr	r3, [sp, #12]
@@ -11259,8 +11264,8 @@ int _kill(int pid, int sig) { return -1; }
  80067a0:	e9cd 0104 	strd	r0, r1, [sp, #16]
  80067a4:	e7c4      	b.n	8006730 <_dtoa_r+0x508>
  80067a6:	bf00      	nop
- 80067a8:	08008830 	.word	0x08008830
- 80067ac:	08008808 	.word	0x08008808
+ 80067a8:	08008880 	.word	0x08008880
+ 80067ac:	08008858 	.word	0x08008858
  80067b0:	3ff00000 	.word	0x3ff00000
  80067b4:	40240000 	.word	0x40240000
  80067b8:	401c0000 	.word	0x401c0000
@@ -11889,8 +11894,8 @@ int _kill(int pid, int sig) { return -1; }
  8006db8:	f000 fc64 	bl	8007684 <__multadd>
  8006dbc:	9002      	str	r0, [sp, #8]
  8006dbe:	e7eb      	b.n	8006d98 <_dtoa_r+0xb70>
- 8006dc0:	08008774 	.word	0x08008774
- 8006dc4:	080086f8 	.word	0x080086f8
+ 8006dc0:	080087c4 	.word	0x080087c4
+ 8006dc4:	08008748 	.word	0x08008748
 
 08006dc8 <__ssputs_r>:
  8006dc8:	e92d 47f0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
@@ -12167,11 +12172,11 @@ int _kill(int pid, int sig) { return -1; }
  800705c:	4638      	mov	r0, r7
  800705e:	f7fe fdf1 	bl	8005c44 <_printf_i>
  8007062:	e7ed      	b.n	8007040 <_svfiprintf_r+0x1c0>
- 8007064:	08008785 	.word	0x08008785
- 8007068:	0800878f 	.word	0x0800878f
+ 8007064:	080087d5 	.word	0x080087d5
+ 8007068:	080087df 	.word	0x080087df
  800706c:	08005715 	.word	0x08005715
  8007070:	08006dc9 	.word	0x08006dc9
- 8007074:	0800878b 	.word	0x0800878b
+ 8007074:	080087db 	.word	0x080087db
 
 08007078 <__sfputc_r>:
  8007078:	6893      	ldr	r3, [r2, #8]
@@ -12437,11 +12442,11 @@ int _kill(int pid, int sig) { return -1; }
  80072e0:	4630      	mov	r0, r6
  80072e2:	f7fe fcaf 	bl	8005c44 <_printf_i>
  80072e6:	e7e4      	b.n	80072b2 <_vfiprintf_r+0x1e6>
- 80072e8:	08008785 	.word	0x08008785
- 80072ec:	0800878f 	.word	0x0800878f
+ 80072e8:	080087d5 	.word	0x080087d5
+ 80072ec:	080087df 	.word	0x080087df
  80072f0:	08005715 	.word	0x08005715
  80072f4:	080070a7 	.word	0x080070a7
- 80072f8:	0800878b 	.word	0x0800878b
+ 80072f8:	080087db 	.word	0x080087db
 
 080072fc <malloc>:
  80072fc:	4b02      	ldr	r3, [pc, #8]	@ (8007308 <malloc+0xc>)
@@ -12811,8 +12816,8 @@ int _kill(int pid, int sig) { return -1; }
  8007630:	e9c0 3303 	strd	r3, r3, [r0, #12]
  8007634:	e7f7      	b.n	8007626 <_Balloc+0x66>
  8007636:	bf00      	nop
- 8007638:	08008705 	.word	0x08008705
- 800763c:	08008796 	.word	0x08008796
+ 8007638:	08008755 	.word	0x08008755
+ 800763c:	080087e6 	.word	0x080087e6
 
 08007640 <_Bfree>:
  8007640:	b570      	push	{r4, r5, r6, lr}
@@ -12840,8 +12845,8 @@ int _kill(int pid, int sig) { return -1; }
  8007674:	6021      	str	r1, [r4, #0]
  8007676:	f843 4022 	str.w	r4, [r3, r2, lsl #2]
  800767a:	bd70      	pop	{r4, r5, r6, pc}
- 800767c:	08008705 	.word	0x08008705
- 8007680:	08008796 	.word	0x08008796
+ 800767c:	08008755 	.word	0x08008755
+ 8007680:	080087e6 	.word	0x080087e6
 
 08007684 <__multadd>:
  8007684:	e92d 41f0 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
@@ -12895,8 +12900,8 @@ int _kill(int pid, int sig) { return -1; }
  8007700:	6125      	str	r5, [r4, #16]
  8007702:	4620      	mov	r0, r4
  8007704:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
- 8007708:	08008774 	.word	0x08008774
- 800770c:	08008796 	.word	0x08008796
+ 8007708:	080087c4 	.word	0x080087c4
+ 800770c:	080087e6 	.word	0x080087e6
 
 08007710 <__hi0bits>:
  8007710:	f5b0 3f80 	cmp.w	r0, #65536	@ 0x10000
@@ -12986,8 +12991,8 @@ int _kill(int pid, int sig) { return -1; }
  80077c6:	6103      	str	r3, [r0, #16]
  80077c8:	bd10      	pop	{r4, pc}
  80077ca:	bf00      	nop
- 80077cc:	08008774 	.word	0x08008774
- 80077d0:	08008796 	.word	0x08008796
+ 80077cc:	080087c4 	.word	0x080087c4
+ 80077d0:	080087e6 	.word	0x080087e6
 
 080077d4 <__multiply>:
  80077d4:	e92d 4ff0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
@@ -13106,8 +13111,8 @@ int _kill(int pid, int sig) { return -1; }
  800790a:	e79f      	b.n	800784c <__multiply+0x78>
  800790c:	3e01      	subs	r6, #1
  800790e:	e7a1      	b.n	8007854 <__multiply+0x80>
- 8007910:	08008774 	.word	0x08008774
- 8007914:	08008796 	.word	0x08008796
+ 8007910:	080087c4 	.word	0x080087c4
+ 8007914:	080087e6 	.word	0x080087e6
 
 08007918 <__pow5mult>:
  8007918:	e92d 43f8 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, lr}
@@ -13175,9 +13180,9 @@ int _kill(int pid, int sig) { return -1; }
  80079b8:	4630      	mov	r0, r6
  80079ba:	e8bd 83f8 	ldmia.w	sp!, {r3, r4, r5, r6, r7, r8, r9, pc}
  80079be:	bf00      	nop
- 80079c0:	080087fc 	.word	0x080087fc
- 80079c4:	08008705 	.word	0x08008705
- 80079c8:	08008796 	.word	0x08008796
+ 80079c0:	0800884c 	.word	0x0800884c
+ 80079c4:	08008755 	.word	0x08008755
+ 80079c8:	080087e6 	.word	0x080087e6
 
 080079cc <__lshift>:
  80079cc:	e92d 47f0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
@@ -13256,8 +13261,8 @@ int _kill(int pid, int sig) { return -1; }
  8007a96:	d8f9      	bhi.n	8007a8c <__lshift+0xc0>
  8007a98:	e7ea      	b.n	8007a70 <__lshift+0xa4>
  8007a9a:	bf00      	nop
- 8007a9c:	08008774 	.word	0x08008774
- 8007aa0:	08008796 	.word	0x08008796
+ 8007a9c:	080087c4 	.word	0x080087c4
+ 8007aa0:	080087e6 	.word	0x080087e6
 
 08007aa4 <__mcmp>:
  8007aa4:	690a      	ldr	r2, [r1, #16]
@@ -13393,8 +13398,8 @@ int _kill(int pid, int sig) { return -1; }
  8007bf6:	3f01      	subs	r7, #1
  8007bf8:	e7e7      	b.n	8007bca <__mdiff+0xee>
  8007bfa:	bf00      	nop
- 8007bfc:	08008774 	.word	0x08008774
- 8007c00:	08008796 	.word	0x08008796
+ 8007bfc:	080087c4 	.word	0x080087c4
+ 8007c00:	080087e6 	.word	0x080087e6
 
 08007c04 <__d2b>:
  8007c04:	e92d 43f7 	stmdb	sp!, {r0, r1, r2, r4, r5, r6, r7, r8, r9, lr}
@@ -13460,8 +13465,8 @@ int _kill(int pid, int sig) { return -1; }
  8007ca2:	f7ff fd35 	bl	8007710 <__hi0bits>
  8007ca6:	ebc0 1042 	rsb	r0, r0, r2, lsl #5
  8007caa:	e7e5      	b.n	8007c78 <__d2b+0x74>
- 8007cac:	08008774 	.word	0x08008774
- 8007cb0:	08008796 	.word	0x08008796
+ 8007cac:	080087c4 	.word	0x080087c4
+ 8007cb0:	080087e6 	.word	0x080087e6
 
 08007cb4 <__sread>:
  8007cb4:	b510      	push	{r4, lr}
@@ -14333,8 +14338,8 @@ int _kill(int pid, int sig) { return -1; }
  8008462:	f023 0501 	bic.w	r5, r3, #1
  8008466:	e7de      	b.n	8008426 <__ieee754_sqrt+0x15e>
  8008468:	7ff00000 	.word	0x7ff00000
- 800846c:	08008a08 	.word	0x08008a08
- 8008470:	08008a00 	.word	0x08008a00
+ 800846c:	08008a58 	.word	0x08008a58
+ 8008470:	08008a50 	.word	0x08008a50
 
 08008474 <_exit>:
  8008474:	e7fe      	b.n	8008474 <_exit>
