@@ -90,7 +90,7 @@ const int N=4;
 
 	const uint32_t freefall_timeout_ms = 1200;      // must see impact within this window
 	const uint32_t stillness_window_ms = 2000;      // time after impact to look for stillness
-	const uint32_t fall_alert_duration_ms = 1500000;  // fast blink duration then reset to normal, this will be set to 1500 seconds
+	const uint32_t fall_alert_duration_ms = 15000;  // fast blink duration then reset to normal, this will be set to 15 seconds
 
 	while (1)
 	{
@@ -222,10 +222,29 @@ const int N=4;
 					if (gyroMagnitude < still_gyro_threshold && pressure_confirmed /*&& is_lying_down*/){
 					fall_state = 3;
 					fall_alert_start_tick = now;
-					char nfc_info[64];
-					sprintf(nfc_info, "FALL! Time: %lu s", now / 1000);
-					NFC_Format_And_Write("ALERT: Fall Detected!");
 					delay_ms = 100; // fast blinking to indicate fall
+
+					// Create the string to indicate the time stamp
+					char time_str[64];
+					// 1. Define the time you usually turn on/reset the board
+					// 2:40 PM Presentation time (We need to hard-code the time as there is no clock running in the background when the board is asleep)
+					uint32_t boot_time_sgt_seconds = (8 * 3600) + (33 * 60) + 0;
+
+					// 2. Calculate elapsed seconds since boot
+					uint32_t total_elapsed_seconds = fall_alert_start_tick / 1000;
+
+					// 3. Add elapsed time to your boot time
+					uint32_t current_time_seconds = boot_time_sgt_seconds + total_elapsed_seconds;
+
+					// 4. Convert back to Hours, Minutes, and Seconds
+					uint32_t hours = (current_time_seconds / 3600) % 24;
+					uint32_t minutes = (current_time_seconds / 60) % 60;
+					uint32_t seconds = current_time_seconds % 60;
+
+					// Write to NFC and UART
+					sprintf(time_str, "ALERT: Fall Detected at %02lu:%02lu:%02lu SGT", hours, minutes, seconds);
+					NFC_Format_And_Write(time_str);
+
 
 					char gyro_alert[] = "\r\n*** FALL DETECTED! ***\r\n--- Waiting 15 seconds for User OK Button... ---\r\n\n";
 					HAL_UART_Transmit(&huart1, (uint8_t*)gyro_alert, strlen(gyro_alert), HAL_MAX_DELAY);
@@ -317,6 +336,8 @@ void NFC_Format_And_Write(char* message) {
     sprintf(dbg, "NDEF Write ret: %ld, total bytes: %d\r\n", ret, idx);
     HAL_UART_Transmit(&huart1, (uint8_t*)dbg, strlen(dbg), HAL_MAX_DELAY);
 }
+
+
 
 int mov_avg_C(int N, int* accel_buff)
 { 	// The implementation below is inefficient and meant only for verifying your results.
