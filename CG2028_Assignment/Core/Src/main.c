@@ -228,7 +228,7 @@ const int N=4;
 					char time_str[64];
 					// 1. Define the time you usually turn on/reset the board
 					// 2:40 PM Presentation time (We need to hard-code the time as there is no clock running in the background when the board is asleep)
-					uint32_t boot_time_sgt_seconds = (8 * 3600) + (33 * 60) + 0;
+					uint32_t boot_time_sgt_seconds = (14 * 3600) + (40 * 60) + 0;
 
 					// 2. Calculate elapsed seconds since boot
 					uint32_t total_elapsed_seconds = fall_alert_start_tick / 1000;
